@@ -1,0 +1,118 @@
+body {
+  background-color: black;
+  font-size: 16px;
+  color: lightWhite;
+}
+
+h1 {
+  color: white;
+}
+
+h2 {
+  color: white;
+}
+
+h3 {
+  color: white;
+}
+
+footer {
+  font-size: 0.75rem;
+  background-color: dimBlack; 
+  color: white;
+  padding: 25px 15px;
+  
+}
+
+table{
+  color:white !important
+}
+
+
+td{
+  color:white !important
+}
+
+.card {
+    background-color: rgb(20, 20, 20);
+    border-radius: 5px;
+    padding: 1em;
+    margin-bottom: 1em;
+    color: white;
+   
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    border-bottom: 10px solid #731DD8;
+    margin-bottom: 1em;
+  }
+  
+ 
+  .dropdown-toggle {
+    background-color: black;
+    border: 1px solid rgb(40,40,40);
+    
+  }
+
+  .dropdown-menu {
+    background-color: black;
+    border: 1px solid rgb(40,40,40);
+    color: white;
+
+  }
+  .dropdown-item {
+      color: white;
+    }
+    .dropdown-item.active {
+      background-color: #731DD8; 
+      color: white;
+    }
+    .dropdown-item:hover{
+      background-color: #441282;
+      color: white;
+    }
+
+  .visible {
+    display: block;
+  }
+  
+
+
+    .header-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0;
+      font-size: 1rem;
+      line-height: 38px;
+    }
+    .contract-address {
+      color: black; 
+      font-size: 0.8rem; 
+      
+    }
+    .contract-address .address {
+        font-family: 'Courier';
+      }
+
+    .popup{
+      position:absolute;
+        left: 25%;
+    right: 25%;
+    top: 25%;
+    bottom: 25%;
+    margin: auto;
+    background: grey;
+    z-index: 10
+    }
+
+    .closeCross{
+      text-align:right;    
+    }
+    .closeCross:hover{
+      cursor:pointer;
+
+    }
