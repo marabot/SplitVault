@@ -204,7 +204,7 @@ function App({web3,  contracts, accounts}) {
       const mySplitVault = await contracts.splitVault.methods.getSplitVaults(accounts[0]).call();   
       setMySplitVault(mySplitVault);
       
-      const myVaults = await contracts.splitVault.methods.getVaultByAdress(acc).call();   
+      const myVaults = await contracts.splitVault.methods.getVaultsByAddress(acc).call();   
       setMyVaults(myVaults);
       
       
