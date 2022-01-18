@@ -160,6 +160,26 @@ function App({web3,  contracts, accounts}) {
         }
     }
 
+    const myVaults= function(){
+      if (MyVaults.length==0)
+      {
+        return(
+          <tbody>
+         <div className="card">Vous n'avez fait aucun dépot  </div>
+         </tbody>
+        )
+      }
+      else
+      {
+        return(
+          <Vaults
+            vaults={MyVaults}
+            title= 'My Vaults'
+           />
+        )
+      }
+   }
+
     const displaystuff = function(){     
       
      alert('');
@@ -178,13 +198,13 @@ function App({web3,  contracts, accounts}) {
           ticker: web3.utils.hexToUtf8(token.ticker)
       }));      
 
-      const AllSplitVaults = await contracts.splitVault.methods.getAllSplitVaults().call();      
-      setAllSplitVaults(AllSplitVaults);
-    
+      const allSplitVaults = await contracts.splitVault.methods.getAllSplitVaults().call();      
+      setAllSplitVaults(allSplitVaults);
+      
       const mySplitVault = await contracts.splitVault.methods.getSplitVaults(accounts[0]).call();   
       setMySplitVault(mySplitVault);
       
-      const myVaults = await contracts.splitVault.methods.getVaultById(accounts[0]).call();   
+      const myVaults = await contracts.splitVault.methods.getVaultByAdress(acc).call();   
       setMyVaults(myVaults);
       
       
@@ -214,20 +234,11 @@ function App({web3,  contracts, accounts}) {
         {withdrawComponetRender()}
        
         {mySplitVault()}
+        {myVaults()}
        
-        <Vaults
-            Vaults={MyVaults}
-            title= 'My Vaults'
-        />
        
-        <Vaults
-            Vaults={AllVaults}
-            title= 'All Vaults'
-        />
-        <DaiFaucet
-              contracts={contracts}
-              user={userAddr}
-        />
+        
+       
       </div>    
     );
 }
