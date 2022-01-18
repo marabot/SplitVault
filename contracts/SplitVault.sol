@@ -197,14 +197,11 @@ contract SplitVault{
        
 
         function getVaultsByAddress(address addr) external view returns (Vault[] memory){
-            uint[] memory VaultsId = VaultsIdsByOwner[addr];
-            Vault[] memory ret = new Vault[](1);
-            if(VaultsId.length==0){
-                ret = new Vault[](VaultsId.length);
+           uint[] memory VaultsId = VaultsIdsByOwner[addr];
+            Vault[] memory ret= new Vault[](VaultsId.length);   
                 for(uint i =0;i< VaultsId.length;i++){  
-                  ret[i]= getVaultById(VaultsId[i]); 
-                }               
-            }
+                  ret[i]= Vaults[VaultsId[i]]; 
+                }   
             return ret;
         }
 
