@@ -1,23 +1,27 @@
 import React from 'react';
 
 
+const styleMenuBack= {
+    color:"white",  
+    fontSize:30,
+    background:"linear-gradient(135deg,#22330e80,#ba974550)",
+    
+}
+
 
 function Header({
     userAddr  
 }){
     return(
-      <header id="header" className="card">
-      <div className="row">
-          <div className="col-sm-3 flex">
-         </div>
-      </div>
-      <div className="col-sm-9">
+      <div id="header"  style={styleMenuBack}>
+     
+     
                     <h1 className="header-title">
                     {userAddr}
                     </h1>
-        </div>
         
-</header>
+        
+        </div>
     );
 }
 

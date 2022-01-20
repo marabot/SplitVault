@@ -6,8 +6,10 @@ import Vaults from './Vaults.js';
 import './Main.css';
 import NewVault from "./NewSplit.js";
 import Deposit from "./Deposit.js";
-import DaiFaucet from "./DaiFaucet.js";
 import Withdraw from "./Withdraw.js";
+import {Helmet} from "react-helmet";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 
 //function getSplitVault(address sbOwner) external view returns(SplitVault[] memory){       
@@ -180,10 +182,7 @@ function App({web3,  contracts, accounts}) {
       }
    }
 
-    const displaystuff = function(){     
-      
-     alert('');
-     }
+    
 
   useEffect(()=>{
     const init = async()=>{
@@ -222,19 +221,33 @@ function App({web3,  contracts, accounts}) {
     },[]);
 
 
+    const styleBack= {
+      color:"white", 
+      fontSize:30,
+      width:"100%"
+   }
 
     return (    
-      <div id="app">
+      <div id="app" style={styleBack}>
+       <Helmet>
+
+           <style>{'body { background-image: ../res/30-sut-ethereum-1.jpg; }'}</style>
+       </Helmet>
         <Header 
         userAddr={userAddr}/>
-        <button className="btn btn-primary" onClick={displaystuff}>test</button>
-        
+        <Row >-</Row>
+        <Row>
+          <Col className="col-sm-2"></Col>
+          <Col className="col-sm-5">          
+             {mySplitVault()}
+          </Col>
+          <Col className="col-sm-5"> {myVaults()}</Col>
+        </Row>
         {createComponetRender()}
         {depositComponetRender()}
         {withdrawComponetRender()}
        
-        {mySplitVault()}
-        {myVaults()}
+       
        
        
         
