@@ -143,7 +143,7 @@ function App({web3,  contracts, accounts}) {
         {
           return(
             <tbody>
-           <div className="card">Vous n'avez crée aucun splitVault  <button className="btn btn-primary" onClick={()=>showCreateCard()}>Create SplitVault</button></div>
+           <div className="card">No Splitvault with this adress<button className="btn btn-primary" onClick={()=>showCreateCard()}>Create SplitVault</button></div>
            </tbody>
           )
         }
@@ -167,7 +167,7 @@ function App({web3,  contracts, accounts}) {
       {
         return(
           <tbody>
-         <div className="card">Vous n'avez fait aucun dépot  </div>
+         <div className="card">No Vault with this adress</div>
          </tbody>
         )
       }
@@ -231,7 +231,7 @@ function App({web3,  contracts, accounts}) {
       <div id="app" style={styleBack}>
        <Helmet>
 
-           <style>{'body { background-image: ../res/30-sut-ethereum-1.jpg; }'}</style>
+
        </Helmet>
         <Header 
         userAddr={userAddr}/>
@@ -242,6 +242,7 @@ function App({web3,  contracts, accounts}) {
              {mySplitVault()}
           </Col>
           <Col className="col-sm-5"> {myVaults()}</Col>
+          <Col className="col-sm-2"></Col>
         </Row>
         {createComponetRender()}
         {depositComponetRender()}
