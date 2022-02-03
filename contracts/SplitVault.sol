@@ -4,138 +4,119 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract SplitVault{
 
-        // SplitsVaults & Vaults par ID
-        mapping(uint => SplitVault) splitVaults;    
-        mapping(uint => Vault) Vaults;
-        // liens splitVaults / Vaults
-        mapping(uint=> uint[]) VaultsId_By_splitVaultId;
+        // Bags by owner
+        mapping(address => Bag) Bags;
         
-        //Splits & Vaults par owner
-        mapping(address=> uint[]) splitVaultsIdsByOwner;
-        mapping(address=> uint[]) VaultsIdsByOwner;
-        mapping(uint=> address) splitVaultOwnerById;
-        mapping(uint=> address) VaultOwnerById;
+        bool isOpen;
+        string name;
+        uint totalAmount;  
 
-        address[] splitOwnersList;
-        mapping(address=> bool) isOwnerAlreadyThere;
-        uint splitVaultsCount;
+        address[] bagsOwnersList;
         
         // Tokens
         mapping(bytes32 => Token) public tokens;
         bytes32[] public tokenList;
 
-        uint splitVaultNextId;
-        uint VaultNextId;
+        struct Token {
+            bytes32 ticker;
+            address tokenAddress;
+        }
         
         uint oneWei= 1 wei;
 
         address admin;
         address bnbAddress= 0xB8c77482e45F1F44dE1745F52C74426C631bDD52;
 
-        struct Token {
-            bytes32 ticker;
-            address tokenAddress;
-         }
-
-        struct SplitVault{  
-            uint splitId;          
-            string name;    
-            bool open;
-            uint totalAmount;                 
-        }
+       
 
         // part en 1/1000 (10% => 100)
-        struct Vault{
-            uint VaultId;
-            address from;
+        struct Bag{    
+            address from;                
             uint amount;
-            uint part;
-            uint splitId;
+            uint part;                    
         }        
 
-        constructor( ){
-            admin= msg.sender;
-            splitVaultNextId=0;
-            VaultNextId=0;
+        constructor(string memory _name,  bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
+            for(uint i=0;i<_tokensTickers.length;i++)
+            {                
+                 tokens[_tokensTickers[i]] = Token(_tokensTickers[i], _tokensAddress[i]);
+                 tokenList.push(_tokensTickers[i]);               
+            }
+            admin= msg.sender; 
+            isOpen=true;    
+            name = _name;       
         }
 
-        function createSplitVault(string memory name) external returns(uint){            
-            splitVaults[splitVaultNextId] = SplitVault(splitVaultNextId,name,true, 0);
-                   
-             if(isOwnerAlreadyThere[msg.sender]==false){
-                 splitOwnersList.push(msg.sender); 
-                 isOwnerAlreadyThere[msg.sender]=true;
-             }  
+        
+        function deposit(uint _amount, address _sender) external payable  returns (uint)  {
              
-         
-            uint[] storage sbByAdress = splitVaultsIdsByOwner[msg.sender];
-            sbByAdress.push(splitVaultNextId);
-            splitVaultOwnerById[splitVaultNextId]= msg.sender;
-
-            splitVaultNextId++;
-            splitVaultsCount++;           
-            return splitVaultNextId-1;
-        }
-
-        function deposit(uint splitVaultId, uint amount) external returns (uint ) {
-            bool isOpen = splitVaults[splitVaultId].open;
             require(isOpen==true,'l inscription a ce splitVault est cloture');
 
+             ///  try catch à faire 
             IERC20(tokens[tokenList[0]].tokenAddress).transferFrom(
-                    msg.sender,
+                    _sender,
                     address(this),
-                    amount
+                    _amount
                     );
 
-            Vaults[VaultNextId] = Vault(VaultNextId,msg.sender, amount, 0, splitVaultId); 
-
-            splitVaults[splitVaultId].totalAmount += amount;  
-            uint[] storage VaultsSplit = VaultsId_By_splitVaultId[splitVaultId];   
-            VaultsSplit.push(VaultNextId);
-
-            VaultOwnerById[VaultNextId]= msg.sender;
-
-            uint[] storage VaultsByAdress = VaultsIdsByOwner[msg.sender]; 
-            VaultsByAdress.push(VaultNextId);
-            
-            VaultNextId++;
-            return (VaultNextId - 1);
+            // si 1er dépôt
+            if (Bags[_sender].from==address(0x0))
+            {
+                bagsOwnersList.push(_sender);
+                Bags[_sender] = Bag(_sender,_amount, 0);  
+            }
+            //si a déjà un dépot
+            else
+            {
+                Bag storage ownerbag = Bags[_sender];
+                ownerbag.amount += _amount; 
+            }
+            totalAmount+=_amount;
+            /// recalcule des parts
+         
+            return 1;
         }        
 
-        function retire (uint id,  uint amount) external isSplitFromSender(id){           
-           
-            uint[] storage _VaultIds = VaultsId_By_splitVaultId[id];
-            uint amountToTransfer;
 
-            for(uint i =0;i< _VaultIds.length;i++){  
-                //uint amountToTransfer = amount * (Vaults[_VaultIds[i]].part/1000);
-                uint VaultPart = Vaults[_VaultIds[i]].part;
-                amountToTransfer = (amount/1e18) * VaultPart * 1e15;
-                
-                IERC20(tokens[tokenList[0]].tokenAddress).transfer(
-                    Vaults[_VaultIds[i]].from,
-                    amountToTransfer
-                 );
-            }
+        function getBag() external  returns (Bag memory){
+                return Bags[msg.sender];
         }
 
-        function closeSubsplitVault(uint id) external isSplitFromSender(id) {           
 
-            SplitVault storage sb =  splitVaults[id];      
 
-            // calcul repartition
-            uint[] memory _VaultsId = VaultsId_By_splitVaultId[id];
-            
-
-            for(uint j =0;j< _VaultsId.length;j++){  
-                Vault storage _Vault=  Vaults[_VaultsId[j]];
+        function retire (uint _amount) external onlyAdmin  {          
                
-                _Vault.part = (_Vault.amount *1000) / sb.totalAmount;
-                //_Vault.part = _Vault.amount / TotalAmount * 1000;
-            }
-            sb.open = false;
+                for(uint i; i < bagsOwnersList.length;i++)
+                {
+                    Bag storage b = Bags[bagsOwnersList[i]];
+                    uint toRetire = (_amount/1000)* b.part ;
+                    b.amount= b.amount - toRetire;
+                    ///  try catch à faire
+                    IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
+                    b.from,
+                    toRetire
+                    );                    
+                }               
         }
 
+        
+
+        function computeParts() internal   {
+             for (uint i;i<bagsOwnersList.length;i++)
+            {
+                Bag storage b = Bags[bagsOwnersList[i]];
+                uint newPart= b.amount*1000 / totalAmount;
+                b.part = newPart;
+            }       
+        }
+
+
+        function closeSubSplitVault(address _sender) external payable onlyAdmin() {   
+            require(isOpen==true,'l inscription a ce splitVault est deja cloture');
+                    
+            isOpen =false;  
+            computeParts();            
+        }
 
         function getTokens() 
             external 
@@ -160,76 +141,35 @@ contract SplitVault{
             tokenList.push(ticker);
         }
 
-        function getSplitVaults(address sbOwner) external view returns(SplitVault[] memory){       
-            uint[] memory splitVaultsOfOwner= splitVaultsIdsByOwner[sbOwner];
-            SplitVault[] memory ret = new SplitVault[](splitVaultsOfOwner.length);
-            for(uint i =0;i< splitVaultsOfOwner.length;i++){
-                ret[i]=splitVaults[splitVaultsOfOwner[i]];     
-           } 
+          function test() external view returns(string memory){      
+          
+            return 'ttttttt';
+        }
 
+        function getAllBags() external view returns(Bag[] memory){      
+           Bag[] memory ret = new Bag[](bagsOwnersList.length);
+           for (uint i;i<bagsOwnersList.length;i++)
+                {
+                    ret[i] = Bags[bagsOwnersList[i]];
+                }
             return ret;
-        }
-
-        function getSplitVaultById(uint id) external view returns(SplitVault memory){  
-            return splitVaults[id];
-        }
-
-        function getAllSplitVaults() external view returns(SplitVault[] memory){      
-            SplitVault[] memory ret =new SplitVault[](splitVaultsCount);
-            uint index=0;
-
-             for(uint i =0;i< splitOwnersList.length;i++){  
-                
-                  for(uint j =0;j< splitVaultsIdsByOwner[splitOwnersList[i]].length;j++){ 
-                      
-                      uint id =splitVaultsIdsByOwner[splitOwnersList[i]][j];  
-                      ret[index]= splitVaults[id];
-                      index += 1;   
-                  }     
-             }   
-            return ret;
-        }
-
-        function getVaultById(uint id) public view returns (Vault memory){
-            return Vaults[id];
         }
 
        
 
-        function getVaultsByAddress(address addr) external view returns (Vault[] memory){
-           uint[] memory VaultsId = VaultsIdsByOwner[addr];
-            Vault[] memory ret= new Vault[](VaultsId.length);   
-                for(uint i =0;i< VaultsId.length;i++){  
-                  ret[i]= Vaults[VaultsId[i]]; 
-                }   
-            return ret;
-        }
-
         
-        function getTotalAmountsplitVault(uint id) public view returns(uint){
-            uint[] memory _VaultIds = VaultsId_By_splitVaultId[id];
-            uint ret = 0;
-            for(uint i =0;i< _VaultIds.length;i++){  
-                ret += Vaults[_VaultIds[i]].amount;
-            }
+        function getTotalAmountsplitVault() public view returns(uint){
+            uint ret=0;
+             for (uint i;i<bagsOwnersList.length;i++)
+                {
+                    ret += Bags[bagsOwnersList[i]].amount;
+                }
             return ret;
         }
 
-        modifier isSplitFromSender(uint id) {
-            bool ok= false;
-            uint[] memory splitIdsFromSender = splitVaultsIdsByOwner[msg.sender];
-            for(uint i =0;i< splitIdsFromSender.length;i++){  
-                if (splitIdsFromSender[i] == id){
-                    ok=true;
-                }            
-            }
-            require(
-                ok==true,
-                'Ce splitVault ne vous appartient pas'
-            );
-        _;
+        function isSplitOpen() external view returns(bool){
+         return isOpen;   
         }
-
 
         modifier tokenExist(bytes32 ticker) {
             require(
@@ -239,8 +179,20 @@ contract SplitVault{
         _;
         }
         
+        function getAdmin() external view returns (address )
+        {
+            return admin;
+
+        }
+
+
         modifier onlyAdmin() {
             require(msg.sender == admin, 'only admin');
             _;
         }
+
+        // TODO
+        /// onlyOwnerOfSP
+
+        /// onlyOwnerOfBag
 }

@@ -1,4 +1,5 @@
 const SplitVault = artifacts.require("SplitVault.sol");
+const VaultFactory = artifacts.require('VaultFactory.sol');
 const Dai = artifacts.require("Mocks/Dai.sol")
 
 
@@ -8,22 +9,22 @@ module.exports =async function (deployer, _network, accounts) {
 
     const eth = 10^18;
     const [ trader1, trader2, trader3,trader4,_]= accounts;
-    await deployer.deploy(SplitVault); 
-    const Spb = await SplitVault.deployed()
+    await deployer.deploy(VaultFactory); 
+    const splitVault = await VaultFactory.deployed()
     const dai = await deployer.deploy(Dai);
-    await Spb.addToken(DAI, dai.address);
+    await splitVault.addToken(DAI, dai.address);
     
     const amount = 1000*eth;
     await dai.faucet(trader1, amount)
     await dai.approve(
-      SplitVault.address, 
+      VaultFactory.address, 
       amount, 
       {from: trader1}
     );   
 
     await dai.faucet( trader2, amount)
     await dai.approve(
-      SplitVault.address, 
+      VaultFactory.address, 
       amount, 
       {from: trader2}
     );   
@@ -32,14 +33,14 @@ module.exports =async function (deployer, _network, accounts) {
 
     await dai.faucet(trader3, amount)
     await dai.approve(
-      SplitVault.address, 
+      VaultFactory.address, 
       amount, 
       {from: trader3}
     );   
 
     await dai.faucet(trader4, amount)
     await dai.approve(
-      SplitVault.address, 
+      VaultFactory.address, 
       amount, 
       {from: trader4}
     );   
