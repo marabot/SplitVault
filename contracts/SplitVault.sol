@@ -48,7 +48,7 @@ contract SplitVault{
         }
 
         
-        function deposit(uint _amount, address _sender) external payable  returns (uint)  {
+        function deposit(uint _amount, address _sender) external payable onlyAdmin returns (uint)   {
              
             require(isOpen==true,'l inscription a ce splitVault est cloture');
 
@@ -101,7 +101,7 @@ contract SplitVault{
 
         
 
-        function computeParts() internal   {
+        function computeParts() internal onlyAdmin  {
              for (uint i;i<bagsOwnersList.length;i++)
             {
                 Bag storage b = Bags[bagsOwnersList[i]];
@@ -111,7 +111,7 @@ contract SplitVault{
         }
 
 
-        function closeSubSplitVault(address _sender) external payable onlyAdmin() {   
+        function closeSubSplitVault(address _sender) external payable onlyAdmin {   
             require(isOpen==true,'l inscription a ce splitVault est deja cloture');
                     
             isOpen =false;  

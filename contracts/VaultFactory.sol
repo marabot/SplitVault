@@ -33,7 +33,7 @@ contract VaultFactory{
             admin= msg.sender;           
         }
 
-        function createSplitVault(string memory _name) payable external returns(address  ){  
+        function createSplitVault(string memory _name) payable external returns(address){  
                     
             bytes32[] memory tokensTickers = new bytes32[](tokenList.length);
             address[] memory tokensAddress = new address[](tokenList.length);
@@ -56,6 +56,8 @@ contract VaultFactory{
         function deposit(uint _amount, address _splitContract) payable external 
         {
             SplitVault sp = splitVaultByAddr[_splitContract];
+            require(sp.getAdmin()==msg.sender, 'Vous n etes pas le createur du splitvault')
+            
             sp.deposit(_amount, msg.sender);
 
         }
