@@ -1,5 +1,6 @@
 const SplitVault = artifacts.require("SplitVault.sol");
 const VaultFactory = artifacts.require('VaultFactory.sol');
+const VaultMain = artifacts.require('VaultMain.sol');
 const Dai = artifacts.require("Mocks/Dai.sol")
 
 
@@ -8,11 +9,20 @@ const DAI = web3.utils.fromAscii('DAI');
 module.exports =async function (deployer, _network, accounts) {
 
     const eth = 10^18;
-    const [ trader1, trader2, trader3,trader4,_]= accounts;
+    //const [ trader1, trader2, trader3,trader4,_]= accounts;
+   
+
+  
     await deployer.deploy(VaultFactory); 
-    const splitVault = await VaultFactory.deployed()
+    const vaultFactory = await VaultFactory.deployed()
+
     const dai = await deployer.deploy(Dai);
-    await splitVault.addToken(DAI, dai.address);
+    await vaultFactory.addToken(DAI, dai.address);
+
+    await deployer.deploy(VaultMain, vaultFactory.address); 
+    const vaultMain = await VaultMain.deployed()
+   /* 
+  
     
     const amount = 1000*eth;
     await dai.faucet(trader1, amount)
@@ -45,7 +55,7 @@ module.exports =async function (deployer, _network, accounts) {
       {from: trader4}
     );   
 
-    const amount2 = web3.utils.toWei("50");
+    const amount2 = web3.utils.toWei("50");*/
 
    /* await Spb.createSplitVault('nom test', {from:trader1}); 
     await Spb.createSplitVault('nom test', {from:trader4});   

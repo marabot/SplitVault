@@ -1,6 +1,8 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import './interfaces/IJoeRouter02.sol';
+
 
 contract SplitVault{
 
@@ -25,8 +27,6 @@ contract SplitVault{
         uint oneWei= 1 wei;
 
         address admin;
-        address bnbAddress= 0xB8c77482e45F1F44dE1745F52C74426C631bDD52;
-
        
 
         // part en 1/1000 (10% => 100)
@@ -36,7 +36,10 @@ contract SplitVault{
             uint part;                    
         }        
 
-        constructor(string memory _name,  bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
+
+        IJoeRouter02 joeRouter;
+        ////////// CONSTRUCTOR ////////////
+        constructor(string memory _name, address joeTrader, bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
                  tokens[_tokensTickers[i]] = Token(_tokensTickers[i], _tokensAddress[i]);
@@ -44,7 +47,8 @@ contract SplitVault{
             }
             admin= msg.sender; 
             isOpen=true;    
-            name = _name;       
+            name = _name;  
+            joeRouter = IJoeRouter02(joeTrader);     
         }
 
         
@@ -78,7 +82,7 @@ contract SplitVault{
         }        
 
 
-        function getBag() external  returns (Bag memory){
+        function getBag() external view returns (Bag memory){
                 return Bags[msg.sender];
         }
 
@@ -111,7 +115,7 @@ contract SplitVault{
         }
 
 
-        function closeSubSplitVault(address _sender) external payable onlyAdmin {   
+        function closeSubSplitVault() external payable onlyAdmin {   
             require(isOpen==true,'l inscription a ce splitVault est deja cloture');
                     
             isOpen =false;  
@@ -132,7 +136,7 @@ contract SplitVault{
             return _tokens;
         }
     
-        function addToken(
+        function addToken (
             bytes32 ticker,
             address tokenAddress)
             onlyAdmin()
@@ -141,12 +145,8 @@ contract SplitVault{
             tokenList.push(ticker);
         }
 
-          function test() external view returns(string memory){      
-          
-            return 'ttttttt';
-        }
-
-        function getAllBags() external view returns(Bag[] memory){      
+        
+        function getAllBags() external view returns(Bag[] memory) {      
            Bag[] memory ret = new Bag[](bagsOwnersList.length);
            for (uint i;i<bagsOwnersList.length;i++)
                 {
@@ -154,8 +154,6 @@ contract SplitVault{
                 }
             return ret;
         }
-
-       
 
         
         function getTotalAmountsplitVault() public view returns(uint){
@@ -191,8 +189,4 @@ contract SplitVault{
             _;
         }
 
-        // TODO
-        /// onlyOwnerOfSP
-
-        /// onlyOwnerOfBag
 }
