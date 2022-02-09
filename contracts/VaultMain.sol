@@ -2,11 +2,13 @@ pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './VaultFactory.sol';
+import './libraries/VaultStruct.sol';
 
 contract VaultMain{
         
         //Splits & Vaults par owner
-        mapping(address=> address[]) VaultsByOwner;
+        mapping(address=> address[]) splitVaultsByOwner;
+        mapping(address=> address[]) tipVaultsByOwner;
         mapping(address=> address[]) bagsByUser;  
         mapping(address=> address[]) tipsByUser;  
         mapping(address =>SplitVault) splitVaultByAddr;
@@ -30,6 +32,14 @@ contract VaultMain{
             address tokenAddress;
         }
 
+        struct tipVaultStruct {
+            address addr;
+            string name;
+            address from;
+            uint totalAmount;
+            bool isOpen;
+        }
+
         constructor(VaultFactory _vf){
             admin= msg.sender;      
             VFactory=_vf;    
@@ -39,7 +49,7 @@ contract VaultMain{
         
             SplitVault newSplit= VFactory.createSplitVault(_name);
 
-            address[] storage sp = VaultsByOwner[msg.sender];
+            address[] storage sp = splitVaultsByOwner[msg.sender];
             sp.push(address(newSplit));
 
             splitVaultByAddr[address(newSplit)] = newSplit;
@@ -53,7 +63,7 @@ contract VaultMain{
         
             TipVault newTipV= VFactory.createTipVault(_name, msg.sender);
 
-            address[] storage tp = VaultsByOwner[msg.sender];
+            address[] storage tp = tipVaultsByOwner[msg.sender];
             tp.push(address(newTipV));
 
             tipVaultByAddr[address(newTipV)] = newTipV;
@@ -98,15 +108,35 @@ contract VaultMain{
         }
 
 
-        function getAllTipVaults() external view returns (address[] memory){
-           address[] memory  ret = new address[](allTipVaults.length);
+        function getTipVaultsAddr(address _owner) external view returns (address[] memory){
+           if(_owner==address(0)){
+                address[] memory  ret = new address[](allTipVaults.length);
+
+                for(uint i =0 ;i<allTipVaults.length;i++)
+                {                   
+                    ret[i]=address(allTipVaults[i]);
+                }
+
+                return ret;
+           }
+           
+           return tipVaultsByOwner[_owner];     
+        }
+
+         function getAllTipVaults() external view returns (VaultStruct.tipVaultStruct[] memory){
+           VaultStruct.tipVaultStruct[] memory  ret = new VaultStruct.tipVaultStruct[](allTipVaults.length);
+
 
            for(uint i =0 ;i<allTipVaults.length;i++)
            {
-               ret[i]=address(allTipVaults[i]);
+               
+               ret[i] = allTipVaults[i].getTipVaultStruct();
            }
+
+           
             return ret;
-        }
+         }
+       
 
          function getAllSplitVaults() external view returns (address[] memory){
            address[] memory  ret = new address[](allSplitVaults.length);
@@ -116,10 +146,10 @@ contract VaultMain{
                ret[i]=address(allSplitVaults[i]);
            }
             return ret;
-        }
+         }
 
         function getSenderSplitVaults() external view returns (address[] memory){
-            return VaultsByOwner[msg.sender];
+            return splitVaultsByOwner[msg.sender];
         }
 
          function getTokens() 
@@ -136,6 +166,8 @@ contract VaultMain{
             return _tokens;
         }
 
+      
+      
     
         function addToken(
             bytes32 ticker,
@@ -146,7 +178,7 @@ contract VaultMain{
             tokenList.push(ticker);
         }
 
-        function string_tobytes( string memory  s) internal pure  returns (bytes memory ){
+        function string_tobytes( string memory s) internal pure  returns (bytes memory ){
             bytes memory b3 = bytes(s);
             return b3;
         }

@@ -2,6 +2,7 @@ pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './interfaces/IJoeRouter02.sol';
+import './libraries/VaultStruct.sol';
 
 
 contract SplitVault{
@@ -156,6 +157,9 @@ contract SplitVault{
         }
 
         
+         
+
+
         function getTotalAmountsplitVault() public view returns(uint){
             uint ret=0;
              for (uint i;i<bagsOwnersList.length;i++)

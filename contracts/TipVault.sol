@@ -1,7 +1,7 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-
+import './libraries/VaultStruct.sol';
 
 
 contract TipVault{
@@ -33,6 +33,14 @@ contract TipVault{
             address from;                
             uint amount;                              
         }        
+
+        struct tipVaultStruct {
+            address addr;
+            string name;
+            address from;
+            uint totalAmount;
+            bool isOpen;
+        }
     
         ////////// CONSTRUCTOR ////////////
         constructor(string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
@@ -131,6 +139,12 @@ contract TipVault{
             return ret;
         }
 
+        
+
+        function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){
+            return VaultStruct.tipVaultStruct(address(this),  name, admin, totalAmount, isOpen );
+
+        }
         
         function getTotalAmountsplitVault() public view returns(uint){
             uint ret=0;

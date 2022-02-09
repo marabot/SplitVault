@@ -79,18 +79,18 @@ contract('VaultFactory' , accounts =>{
         let allSB =  await VM.getAllTipVaults(); 
         //console.log(allSB);
 
-        let splitAddrr= allSB[0];        
-        console.log("adress "+ splitAddrr);
+        let tipVault0= allSB[0];        
+        console.log("adress "+ tipVault0.addr);
 
         await dai.approve(
-            splitAddrr, 
+            tipVault0.addr, 
             '1000', 
             {from: trader1}
         );     
 
-        await VM.tip('10',splitAddrr, {from:trader1}); 
+        await VM.tip('10',tipVault0.addr, {from:trader1}); 
 
-        let tpCopntract = await TipVault.at(splitAddrr); 
+        let tpCopntract = await TipVault.at(tipVault0.addr); 
 
        //await spCopntract.deposit('100', {from:trader1}); 
 
@@ -104,43 +104,43 @@ contract('VaultFactory' , accounts =>{
     }, 'échec du dépot du Vault');
 
 
-    it.only('should retire', async()=>{
+    it('should retire', async()=>{
 
         let trader2Balance,trader3Balance,trader4Balance;
 
         await VM.createTipVault('nom test', {from:trader1});      
 
         let allSB =  await VM.getAllTipVaults(); 
-        let splitAddrr= allSB[0];        
-        //console.log(splitAddrr);
-        let tpContract = await TipVault.at(splitAddrr); 
+        let tipVault0= allSB[0];        
+        console.log(tipVault0.addr);
+        let tpContract = await TipVault.at(tipVault0.addr); 
       
 
         await dai.approve(
-            splitAddrr, 
+            tipVault0.addr, 
             web3.utils.toWei('1000'), 
             {from: trader1}
         );     
 
         await dai.approve(
-            splitAddrr, 
+            tipVault0.addr, 
             web3.utils.toWei('1000'), 
             {from: trader2}
         );     
 
         await dai.approve(
-            splitAddrr, 
+            tipVault0.addr, 
             web3.utils.toWei('1000'), 
             {from: trader3}
         );     
         
    
-        await VM.tip(web3.utils.toWei('300'), splitAddrr, {from:trader1}); 
-        await VM.tip(web3.utils.toWei('300'), splitAddrr, {from:trader2}); 
-        await VM.tip(web3.utils.toWei('500'), splitAddrr, {from:trader3}); 
+        await VM.tip(web3.utils.toWei('300'), tipVault0.addr, {from:trader1}); 
+        await VM.tip(web3.utils.toWei('300'), tipVault0.addr, {from:trader2}); 
+        await VM.tip(web3.utils.toWei('500'), tipVault0.addr, {from:trader3}); 
 
-        await VM.closeTipVault(splitAddrr,{from:trader1});  
-        await VM.retireTips(splitAddrr,trader4,{from:trader1});  
+        await VM.closeTipVault(tipVault0.addr,{from:trader1});  
+        await VM.retireTips(tipVault0.addr,trader4,{from:trader1});  
 
         [trader1Balance,trader2Balance,trader3Balance,trader4Balance,daiBalance] = await Promise.all([
             dai.balanceOf(trader1),
