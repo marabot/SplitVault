@@ -7,59 +7,30 @@ import './libraries/VaultStruct.sol';
 contract VaultMain{
         
         //Splits & Vaults par owner
-        mapping(address=> address[]) splitVaultsByOwner;
+      
         mapping(address=> address[]) tipVaultsByOwner;
         mapping(address=> address[]) bagsByUser;  
         mapping(address=> address[]) tipsByUser;  
-        mapping(address =>SplitVault) splitVaultByAddr;
+    
         mapping(address =>TipVault) tipVaultByAddr;
-        SplitVault[] allSplitVaults;
+ 
         TipVault[] allTipVaults;
      
-        uint ownerCount;
-        uint userCount;        
-       
-        uint oneWei= 1 wei;
+                            
         address admin;       
        
         VaultFactory VFactory;
         // Tokens
-        mapping(bytes32 => Token) public tokens;
+        mapping(bytes32 => VaultStruct.Token) public tokens;
         bytes32[] public tokenList;
 
-        struct Token {
-            bytes32 ticker;
-            address tokenAddress;
-        }
-
-        struct tipVaultStruct {
-            address addr;
-            string name;
-            address from;
-            uint totalAmount;
-            bool isOpen;
-        }
-
+        
         constructor(VaultFactory _vf){
             admin= msg.sender;      
             VFactory=_vf;    
         }
 
-        function createSplitVault(string memory _name) payable external returns(address){                                
-        
-            SplitVault newSplit= VFactory.createSplitVault(_name);
-
-            address[] storage sp = splitVaultsByOwner[msg.sender];
-            sp.push(address(newSplit));
-
-            splitVaultByAddr[address(newSplit)] = newSplit;
-            allSplitVaults.push(newSplit);
-            
-            return address(newSplit);
-        }
-
-        function createTipVault(string memory _name) payable external returns(address){  
-             
+        function createTipVault(string memory _name) payable external returns(address){               
         
             TipVault newTipV= VFactory.createTipVault(_name, msg.sender);
 
@@ -79,33 +50,16 @@ contract VaultMain{
         }
 
         function retireTips(address _splitContract, address _to) external payable  {
-             tipVaultByAddr[_splitContract].retire(_to, msg.sender);           
-                       
+            tipVaultByAddr[_splitContract].retire(_to, msg.sender);           
+                 
         }
 
-
-        function deposit(uint _amount, address _splitContract) payable external 
-        {             
-            splitVaultByAddr[_splitContract].deposit(_amount, msg.sender);
-        }
+     
 
         function closeTipVault(address _splitAddr) external payable     {
-              tipVaultByAddr[_splitAddr].close(msg.sender);               
-            
-        }        
+              tipVaultByAddr[_splitAddr].close(msg.sender);  
+        }               
 
-        function closeSplitVault(address _splitAddr) external payable     {
-              SplitVault sp = splitVaultByAddr[_splitAddr];
-              require(sp.getAdmin()==msg.sender, 'pas votre splitvault');
-              sp.closeSubSplitVault();  
-            
-        }        
-
-        function retire(uint _amount, address _splitContract) external payable  {
-             SplitVault sp = splitVaultByAddr[_splitContract];
-             require(sp.getAdmin()==msg.sender, 'pas votre splitvault');
-             sp.retire(_amount);            
-        }
 
 
         function getTipVaultsAddr(address _owner) external view returns (address[] memory){
@@ -123,42 +77,47 @@ contract VaultMain{
            return tipVaultsByOwner[_owner];     
         }
 
-         function getAllTipVaults() external view returns (VaultStruct.tipVaultStruct[] memory){
-           VaultStruct.tipVaultStruct[] memory  ret = new VaultStruct.tipVaultStruct[](allTipVaults.length);
+        function getTipVaults(address _tipOwner) external view returns (VaultStruct.tipVaultStruct[] memory){
+                VaultStruct.tipVaultStruct[] memory  ret = new VaultStruct.tipVaultStruct[](tipVaultsByOwner[_tipOwner].length);
 
-
-           for(uint i =0 ;i<allTipVaults.length;i++)
-           {
-               
-               ret[i] = allTipVaults[i].getTipVaultStruct();
-           }
-
-           
+                for(uint i =0 ;i<tipVaultsByOwner[_tipOwner].length;i++)
+                {                                
+                    ret[i] = tipVaultByAddr[tipVaultsByOwner[_tipOwner][i]].getTipVaultStruct();
+                }
+                
             return ret;
-         }
-       
-
-         function getAllSplitVaults() external view returns (address[] memory){
-           address[] memory  ret = new address[](allSplitVaults.length);
-
-           for(uint i =0 ;i<allSplitVaults.length;i++)
-           {
-               ret[i]=address(allSplitVaults[i]);
-           }
-            return ret;
-         }
-
-        function getSenderSplitVaults() external view returns (address[] memory){
-            return splitVaultsByOwner[msg.sender];
         }
 
+        function getTipsByOwnerAddr(address _tipsOwner) external view returns (VaultStruct.Tip[] memory){
+
+                VaultStruct.Tip[] memory ret = new VaultStruct.Tip[](tipsByUser[_tipsOwner].length);
+                    for(uint i= 0 ;i<tipsByUser[_tipsOwner].length;i++)
+                    {
+                        ret[i] =  tipVaultByAddr[tipsByUser[_tipsOwner][i]].getTipStructOfUser(msg.sender);
+
+                    }  
+                    return ret;
+        }
+
+        function getAllTipVaults() external view returns (VaultStruct.tipVaultStruct[] memory){
+           VaultStruct.tipVaultStruct[] memory  ret = new VaultStruct.tipVaultStruct[](allTipVaults.length);
+
+           for(uint i =0 ;i<allTipVaults.length;i++)
+           {               
+               ret[i] = allTipVaults[i].getTipVaultStruct();
+           }
+           
+            return ret;
+        }
+
+      
          function getTokens() 
             external 
             view 
-            returns(Token[] memory) {
-            Token[] memory _tokens = new Token[](tokenList.length);
+            returns(VaultStruct.Token[] memory) {
+            VaultStruct.Token[] memory _tokens = new VaultStruct.Token[](tokenList.length);
             for (uint i = 0; i < tokenList.length; i++) {
-                _tokens[i] = Token(
+                _tokens[i] = VaultStruct.Token(
                 tokens[tokenList[i]].ticker,
                 tokens[tokenList[i]].tokenAddress
                 );
@@ -166,15 +125,13 @@ contract VaultMain{
             return _tokens;
         }
 
-      
-      
     
         function addToken(
             bytes32 ticker,
             address tokenAddress)
             onlyAdmin()
             external {
-            tokens[ticker] = Token(ticker, tokenAddress);
+            tokens[ticker] = VaultStruct.Token(ticker, tokenAddress);
             tokenList.push(ticker);
         }
 
@@ -182,7 +139,6 @@ contract VaultMain{
             bytes memory b3 = bytes(s);
             return b3;
         }
-
 
         
         modifier onlyAdmin() {

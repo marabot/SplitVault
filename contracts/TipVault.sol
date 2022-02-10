@@ -6,47 +6,32 @@ import './libraries/VaultStruct.sol';
 
 contract TipVault{
 
-        // Bags by owner
-        mapping(address => Bag) Bags;
+        // Tips by owner
+        mapping(address => VaultStruct.Tip) Tips;
         
         bool isOpen;
         string name;
         uint totalAmount;  
 
-        address[] bagsOwnersList;
+        address[] tipsOwnersList;
         
         // Tokens
-        mapping(bytes32 => Token) public tokens;
+        mapping(bytes32 => VaultStruct.Token) public tokens;
         bytes32[] public tokenList;
 
         struct Token {
             bytes32 ticker;
             address tokenAddress;
-        }
-        
-        uint oneWei= 1 wei;
+        }      
 
         address admin;       
 
-        // part en 1/1000 (10% => 100)
-        struct Bag{    
-            address from;                
-            uint amount;                              
-        }        
-
-        struct tipVaultStruct {
-            address addr;
-            string name;
-            address from;
-            uint totalAmount;
-            bool isOpen;
-        }
     
         ////////// CONSTRUCTOR ////////////
         constructor(string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
-                 tokens[_tokensTickers[i]] = Token(_tokensTickers[i], _tokensAddress[i]);
+                 tokens[_tokensTickers[i]] = VaultStruct.Token(_tokensTickers[i], _tokensAddress[i]);
                  tokenList.push(_tokensTickers[i]);               
             }
             admin= _from; 
@@ -66,16 +51,16 @@ contract TipVault{
                     );
 
             // si 1er dépôt
-            if (Bags[_sender].from==address(0x0))
+            if (Tips[_sender].from==address(0x0))
             {
-                bagsOwnersList.push(_sender);
-                Bags[_sender] = Bag(_sender,_amount);  
+                tipsOwnersList.push(_sender);
+                Tips[_sender] = VaultStruct.Tip(_sender,address(this),_amount);  
             }
             //si a déjà un dépot
             else
             {
-                Bag storage ownerbag = Bags[_sender];
-                ownerbag.amount += _amount; 
+                VaultStruct.Tip storage ownerTip = Tips[_sender];
+                ownerTip.amount += _amount; 
             }
             totalAmount+=_amount;          
          
@@ -83,14 +68,14 @@ contract TipVault{
         }        
 
 
-        function getBag() external view returns (Bag memory){
-                return Bags[msg.sender];
+        function getTipStructOfUser(address _tipOwner) external view returns (VaultStruct.Tip memory){
+                return Tips[_tipOwner];
         }
 
+        
 
 
         function retire(address _to, address _sender) external onlyFromAdmin(_sender)  {   
-
                     IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     totalAmount
@@ -109,10 +94,10 @@ contract TipVault{
         function getTokens() 
             external 
             view 
-            returns(Token[] memory) {
-            Token[] memory _tokens = new Token[](tokenList.length);
+            returns(VaultStruct.Token[] memory) {
+            VaultStruct.Token[] memory _tokens = new VaultStruct.Token[](tokenList.length);
             for (uint i = 0; i < tokenList.length; i++) {
-                _tokens[i] = Token(
+                _tokens[i] = VaultStruct.Token(
                 tokens[tokenList[i]].ticker,
                 tokens[tokenList[i]].tokenAddress
                 );
@@ -125,16 +110,16 @@ contract TipVault{
             address tokenAddress)
             onlyAdmin()
             external {
-            tokens[ticker] = Token(ticker, tokenAddress);
+            tokens[ticker] = VaultStruct.Token(ticker, tokenAddress);
             tokenList.push(ticker);
         }
 
         
-        function getAllBags() external view returns(Bag[] memory) {      
-           Bag[] memory ret = new Bag[](bagsOwnersList.length);
-           for (uint i;i<bagsOwnersList.length;i++)
+        function getAllTips() external view returns(VaultStruct.Tip[] memory) {      
+           VaultStruct.Tip[] memory ret = new VaultStruct.Tip[](tipsOwnersList.length);
+           for (uint i;i<tipsOwnersList.length;i++)
                 {
-                    ret[i] = Bags[bagsOwnersList[i]];
+                    ret[i] = Tips[tipsOwnersList[i]];
                 }
             return ret;
         }
@@ -148,9 +133,9 @@ contract TipVault{
         
         function getTotalAmountsplitVault() public view returns(uint){
             uint ret=0;
-             for (uint i;i<bagsOwnersList.length;i++)
+             for (uint i;i<tipsOwnersList.length;i++)
                 {
-                    ret += Bags[bagsOwnersList[i]].amount;
+                    ret += Tips[tipsOwnersList[i]].amount;
                 }
             return ret;
         }

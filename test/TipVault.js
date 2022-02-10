@@ -1,4 +1,3 @@
-const SplitVault = artifacts.require('SplitVault.sol');
 const TipVault = artifacts.require('TipVault.sol');
 const VaultFactory = artifacts.require('VaultFactory.sol');
 const VaultMain = artifacts.require('VaultMain.sol');
@@ -12,7 +11,7 @@ contract('VaultFactory' , accounts =>{
     
     beforeEach(async ()=>{
         VF = await VaultFactory.new();
-       // SB = await SplitVault.new();
+       
         dai = await Dai.new(); 
         VM = await VaultMain.new(VF.address)
         
@@ -94,7 +93,7 @@ contract('VaultFactory' , accounts =>{
 
        //await spCopntract.deposit('100', {from:trader1}); 
 
-        let allBags =  await tpCopntract.getAllBags(); 
+        let allBags =  await tpCopntract.getAllTips(); 
         console.log(allBags);
         assert(allBags.length == 1);    
         assert(allBags[0].amount == '10');    

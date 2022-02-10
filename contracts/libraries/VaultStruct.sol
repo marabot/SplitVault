@@ -19,7 +19,13 @@ library VaultStruct{
             address from;                
             uint amount;
             uint part;                    
-        }        
+        }     
+
+          struct Tip{    
+            address from; 
+            address vaultFor;               
+            uint amount;                              
+        }           
 
 
 }

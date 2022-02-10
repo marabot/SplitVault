@@ -23,7 +23,7 @@ function NewSplit({createSplit,closePopupCreate}){
         <h2 className="card-title">New Split</h2>   
 
           <div className="form-group row">
-            <label className="col-sm-4 col-form-label" htmlFor="order-amount">Amount</label>
+            
             <div className="col-sm-8">
               <input 
                 value={name}

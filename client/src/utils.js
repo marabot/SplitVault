@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import SplitVaults from './contracts/SplitVault.json';
+import VaultMain from './contracts/VaultMain.json';
 import ERC20Abi from './contracts/fixMapBug/ERC20Abi.json';
 
 const getWeb3 = () => {
@@ -41,13 +41,18 @@ const getWeb3 = () => {
 
   const getContracts = async web3 => {
     const networkId = await web3.eth.net.getId();
-    const deployedNetwork = SplitVaults.networks[networkId];
-    const splitVault = new web3.eth.Contract(
-      SplitVaults.abi,
+    const deployedNetwork = VaultMain.networks[networkId];
+    const vaultMain = new web3.eth.Contract(
+      VaultMain.abi,
       deployedNetwork && deployedNetwork.address,
     );
 
-    const tokens = await splitVault.methods.getTokens().call();
+   /* const tipVault = new web3.eth.Contract(
+      TipVault.abi,
+      deployedNetwork && deployedNetwork.address,
+    );*/
+
+    const tokens = await vaultMain.methods.getTokens().call();
     const tokenContracts = tokens.reduce((acc, token) => ({
       ...acc,
       [web3.utils.hexToUtf8(token.ticker)]: new web3.eth.Contract(
@@ -55,7 +60,7 @@ const getWeb3 = () => {
         token.tokenAddress
       )
     }), {});
-    return { splitVault , ...tokenContracts };
+    return { vaultMain , ...tokenContracts };
   }
 
   export { getWeb3, getContracts };

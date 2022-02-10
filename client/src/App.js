@@ -1,10 +1,10 @@
 
 import React, {useState, useEffect} from "react";
 import Header from './Header.js';
-import SplitVault from './SplitVault.js';
+import TipVault from './TipVaults.js';
 import Vaults from './Vaults.js';
 import './Main.css';
-import NewVault from "./NewSplit.js";
+import NewVault from "./NewTipVault.js";
 import Deposit from "./Deposit.js";
 import Withdraw from "./Withdraw.js";
 import {Helmet} from "react-helmet";
@@ -18,10 +18,12 @@ function App({web3,  contracts, accounts}) {
     const [tokens, setTokens] = useState();
     const [userAddr, setUserAddr] = useState('');
 
-    const [AllSplitVaultss, setAllSplitVaults] = useState([]);
-    const [MySplitVault, setMySplitVault] = useState([]);
-    const [AllVaults, setAllVaults]= useState([]);   
+   
+    const [MySplitVaults, setMySplitVaults] = useState([]);      
     const [MyVaults, setMyVaults]= useState([]); 
+
+    const [MyTipVaults, setMyTipVaults] = useState([]);      
+    const [MyTips, setMyTips]= useState([]); 
 
     const [showDeposit, setShowDeposit] = useState([]);
     const [DepositVaultId, setDepositVaultId] = useState([]);
@@ -33,17 +35,17 @@ function App({web3,  contracts, accounts}) {
     const createSplit = async(name)=>{
       //alert(name);
       //alert(userAddr);
-      await contracts.splitVault.methods.createSplitVault(name).send({from:userAddr});
-      const AllSplitVaults = await contracts.splitVault.methods.getAllSplitVaults().call();       
-      setAllSplitVaults(AllSplitVaults);
+      await contracts.vaultMain.methods.createTipVault(name).send({from:userAddr});
+      const AllTipVaults = await contracts.vaultMain.methods.getTipVaults(userAddr).call();       
+      setMyTipVaults(AllTipVaults);
       setShowCreate(false);
 
     };
 
     /////////////////////////////    SHOW and HIDE POPUP
     const showPopupDeposit= function(id){
-      setDepositVaultId(id);
-      setShowDeposit(true);
+     /* setDepositVaultId(id);
+      setShowDeposit(true);*/
     }
   
 
@@ -134,24 +136,28 @@ function App({web3,  contracts, accounts}) {
           await contracts.splitVault.methods.closeSubSplitVault(id).send({from:userAddr});
           closePopupDepo();
         }catch(e){
-            alert('erreur deposit !  '  +  e);
+            alert('erreur deposit !'  +  e);
         }   
     }
     
-    const mySplitVault= function(){
-        if (MySplitVault.length==0)
+    const myTipVaultsRenderer= function(){
+      alert('all=>>>>' + MyTipVaults[0]);
+      //if(typeof MyTipVaults[0]!='undefined') alert('>>' + MyTipVaults[0].addr);
+     
+      /// bouton create desactive
+        if (MyTipVaults.length==0)
         {
           return(
             <tbody>
-           <div className="card">No Splitvault with this adress<button className="btn btn-primary" onClick={()=>showCreateCard()}>Create SplitVault</button></div>
+                     <div className="card"><button className="btn btn-primary disabled" >Create SplitVault</button></div>
            </tbody>
           )
         }
         else
         {
           return(
-            <SplitVault
-            allSplits={MySplitVault}
+            <TipVault
+            allSplits={MyTipVaults}
             title= 'My SplitVaults'
             showDeposit={showPopupDeposit}
             showCreate={showCreateCard}   
@@ -167,7 +173,7 @@ function App({web3,  contracts, accounts}) {
       {
         return(
           <tbody>
-         <div className="card">No Vault with this adress</div>
+         <div className="card">No tip yet by this adress</div>
          </tbody>
         )
       }
@@ -191,22 +197,25 @@ function App({web3,  contracts, accounts}) {
       const acc= accounts[0];      
       setUserAddr(acc);
 
-      const rawTokens = await contracts.splitVault.methods.getTokens().call();
+      const rawTokens = await contracts.vaultMain.methods.getTokens().call();
       const tokens = rawTokens.map(token=>({
           ...token,
           ticker: web3.utils.hexToUtf8(token.ticker)
       }));      
+     
+      
+      
+      const myTipVaults = await contracts.vaultMain.methods.getTipVaults(acc).call();  
+    
+      setMyTipVaults(myTipVaults);
+     
+      
+      
+      const myTips = await contracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
+      setMyTips(myTips);
+      
+  
 
-      const allSplitVaults = await contracts.splitVault.methods.getAllSplitVaults().call();      
-      setAllSplitVaults(allSplitVaults);
-      
-      const mySplitVault = await contracts.splitVault.methods.getSplitVaults(accounts[0]).call();   
-      setMySplitVault(mySplitVault);
-      
-      const myVaults = await contracts.splitVault.methods.getVaultsByAddress(acc).call();   
-      setMyVaults(myVaults);
-      
-      
       
       //alert(AllSplitVaults[0][1]);
       //alert(AllSplitVaults[0]);
@@ -239,7 +248,7 @@ function App({web3,  contracts, accounts}) {
         <Row>
           <Col className="col-sm-2"></Col>
           <Col className="col-sm-5">          
-             {mySplitVault()}
+             {myTipVaultsRenderer()}
           </Col>
           <Col className="col-sm-5"> {myVaults()}</Col>
           <Col className="col-sm-2"></Col>
