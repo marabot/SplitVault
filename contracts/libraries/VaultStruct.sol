@@ -8,6 +8,7 @@ library VaultStruct{
         }
 
         struct tipVaultStruct {
+            uint id;
             address addr;
             string name;
             address from;
@@ -26,6 +27,4 @@ library VaultStruct{
             address vaultFor;               
             uint amount;                              
         }           
-
-
 }

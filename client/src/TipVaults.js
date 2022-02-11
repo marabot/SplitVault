@@ -3,7 +3,7 @@ import React from "react";
 
 function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWithdraw, openSearch}) {
 
-   
+ 
     const deposit = function(id) {
       showDeposit(id);
     };
@@ -39,7 +39,7 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWi
     
 
     return (
-        <div id="order-list" className="card">      
+      <div id="order-list" className="card">      
     
           <h2 className="card-title">{title}</h2>
           <div><button className="btn btn-primary" onClick={()=>create()}>Create SplitVault</button></div>
@@ -47,9 +47,9 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWi
         
           <hr/>
           <div className="row">
-            <div className="col-sm-6">
-              
+            <div className="col-sm-6">              
             </div>
+
                 <table className={"table table-striped mb-0 order-list"}>
                 <thead>       
                 <tr key='labels'>
@@ -61,16 +61,23 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWi
                 </tr>
                 </thead>        
                 <tbody>
-                {tip_Vaults.map((tip) =>(
-                     <tr key={tip.addr} >                     
-                      
-                     </tr>
+                { tip_Vaults.map((tip) =>
+                (<tr key={tip.id} >                     
+                      <td>{tip.name}</td>
+                       <td>{tip.from}</td>
+                       <td>{tip.totalAmount}</td>                       
+                       <td>{tip.isOpen===true?'open':'closed'}</td>                           
+                       <td><div> <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button></div></td>
+                       
+                       <td>{htmlButtonCloseSplit(tip)}</td>      
+
+                     </tr>					   
                   ))}               
 
                 </tbody>  
-            </table>
+              </table>
           </div>
-        </div>
+      </div>
         
       );
 }

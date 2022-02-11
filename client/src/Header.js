@@ -34,7 +34,7 @@ function Header({
                     <Col className="col-sm-8">                        
                         <div style={styleTitreBack}>
                             <div className="header-title" style={styleTitreBack}>
-                                    SplitVaults
+                                    TipVaults
                             </div>
                         </div>
                     </Col>

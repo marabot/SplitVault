@@ -1,6 +1,7 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/math/SafeMath.sol';
 import './TipVault.sol';
 import './libraries/VaultStruct.sol';
 
@@ -12,7 +13,7 @@ contract VaultFactory{
         bytes32[] public tokenList;
 
         address admin;
-        
+        uint nextTipVaultId;
         constructor(){  
             admin= msg.sender;                    
         }
@@ -27,8 +28,8 @@ contract VaultFactory{
                 tokensTickers[i] = tokenList[i];
                 tokensAddress[i] = tokens[tokenList[i]].tokenAddress;               
             }
-        
-            return (new TipVault(_name,_from, tokensTickers,tokensAddress));
+            nextTipVaultId.add(1);
+            return (new TipVault(nextTipVaultId,_name,_from, tokensTickers,tokensAddress));
         }
 
 

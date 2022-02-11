@@ -1,6 +1,7 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/math/SafeMath.sol';
 import './libraries/VaultStruct.sol';
 
 
@@ -12,7 +13,7 @@ contract TipVault{
         bool isOpen;
         string name;
         uint totalAmount;  
-
+        uint id;
         address[] tipsOwnersList;
         
         // Tokens
@@ -28,7 +29,7 @@ contract TipVault{
 
     
         ////////// CONSTRUCTOR ////////////
-        constructor(string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
+        constructor(uint _id,string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
                  tokens[_tokensTickers[i]] = VaultStruct.Token(_tokensTickers[i], _tokensAddress[i]);
@@ -36,10 +37,11 @@ contract TipVault{
             }
             admin= _from; 
             isOpen=true;    
-            name = _name;              
+            name = _name; 
+            id=_id;             
         }
         
-        function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable  returns (uint)   {
+        function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable   {
              
             require(isOpen==true,'l inscription a ce splitVault est cloture');
 
@@ -60,11 +62,10 @@ contract TipVault{
             else
             {
                 VaultStruct.Tip storage ownerTip = Tips[_sender];
-                ownerTip.amount += _amount; 
+                ownerTip.amount.add(_amount); 
             }
-            totalAmount+=_amount;          
-         
-            return 1;
+            totalAmount.add(_amount);    
+           
         }        
 
 
@@ -76,9 +77,11 @@ contract TipVault{
 
 
         function retire(address _to, address _sender) external onlyFromAdmin(_sender)  {   
+                    uint toRetire = totalAmount;
+                    totalAmount=0;
                     IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
-                    totalAmount
+                    toRetire
                     );                    
          }               
         
@@ -127,7 +130,7 @@ contract TipVault{
         
 
         function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){
-            return VaultStruct.tipVaultStruct(address(this),  name, admin, totalAmount, isOpen );
+            return VaultStruct.tipVaultStruct(id,address(this),  name, admin, totalAmount, isOpen );
 
         }
         
@@ -135,7 +138,7 @@ contract TipVault{
             uint ret=0;
              for (uint i;i<tipsOwnersList.length;i++)
                 {
-                    ret += Tips[tipsOwnersList[i]].amount;
+                    ret.add(Tips[tipsOwnersList[i]].amount);
                 }
             return ret;
         }

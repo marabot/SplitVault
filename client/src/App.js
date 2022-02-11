@@ -141,15 +141,13 @@ function App({web3,  contracts, accounts}) {
     }
     
     const myTipVaultsRenderer= function(){
-      alert('all=>>>>' + MyTipVaults[0]);
-      //if(typeof MyTipVaults[0]!='undefined') alert('>>' + MyTipVaults[0].addr);
-     
+         
       /// bouton create desactive
         if (MyTipVaults.length==0)
         {
           return(
             <tbody>
-                     <div className="card"><button className="btn btn-primary disabled" >Create SplitVault</button></div>
+                     <div className="card"><button className="btn btn-primary disabled" onClick={showCreateCard} >Create SplitVault</button></div>
            </tbody>
           )
         }
@@ -157,8 +155,8 @@ function App({web3,  contracts, accounts}) {
         {
           return(
             <TipVault
-            allSplits={MyTipVaults}
-            title= 'My SplitVaults'
+            tip_Vaults={MyTipVaults}
+            title= 'My TipVAults'
             showDeposit={showPopupDeposit}
             showCreate={showCreateCard}   
             closeSplit={closeSplit} 
@@ -201,29 +199,15 @@ function App({web3,  contracts, accounts}) {
       const tokens = rawTokens.map(token=>({
           ...token,
           ticker: web3.utils.hexToUtf8(token.ticker)
-      }));      
-     
+      }));           
       
       
       const myTipVaults = await contracts.vaultMain.methods.getTipVaults(acc).call();  
-    
-      setMyTipVaults(myTipVaults);
-     
-      
+      setMyTipVaults(myTipVaults);    
       
       const myTips = await contracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
-      setMyTips(myTips);
+      setMyTips(myTips); 
       
-  
-
-      
-      //alert(AllSplitVaults[0][1]);
-      //alert(AllSplitVaults[0]);
-      //const Vaults= await contracts.splitVault.methods.getVaultsByAddress(user.address);
-       
-      //setAllVaults(Vaults);    
-      //alert(acc); 
-      //alert(userAddr);
       
     }
     init();
@@ -256,11 +240,6 @@ function App({web3,  contracts, accounts}) {
         {createComponetRender()}
         {depositComponetRender()}
         {withdrawComponetRender()}
-       
-       
-       
-       
-        
        
       </div>    
     );
