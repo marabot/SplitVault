@@ -1,14 +1,12 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
 import './TipVault.sol';
 import './libraries/VaultStruct.sol';
 
 contract VaultFactory{
         
-        //Splits & Vaults par owner
-           // Tokens
+          
         mapping(bytes32 => VaultStruct.Token) public tokens;
         bytes32[] public tokenList;
 
@@ -18,8 +16,6 @@ contract VaultFactory{
             admin= msg.sender;                    
         }
 
-      
-       
 
         function createTipVault(string memory _name, address _from) external returns(TipVault){
             bytes32[] memory tokensTickers = new bytes32[](tokenList.length);
@@ -28,8 +24,9 @@ contract VaultFactory{
                 tokensTickers[i] = tokenList[i];
                 tokensAddress[i] = tokens[tokenList[i]].tokenAddress;               
             }
-            nextTipVaultId.add(1);
-            return (new TipVault(nextTipVaultId,_name,_from, tokensTickers,tokensAddress));
+            nextTipVaultId++;
+            /// fermeture après 4 mois => TODO passer en paramètre
+            return (new TipVault(nextTipVaultId,_name,_from, tokensTickers,tokensAddress, block.timestamp + 4 weeks));
         }
 
 

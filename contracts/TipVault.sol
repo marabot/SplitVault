@@ -1,7 +1,6 @@
 pragma solidity 0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
 import './libraries/VaultStruct.sol';
 
 
@@ -10,7 +9,7 @@ contract TipVault{
         // Tips by owner
         mapping(address => VaultStruct.Tip) Tips;
         
-        bool isOpen;
+        uint endTime;
         string name;
         uint totalAmount;  
         uint id;
@@ -29,21 +28,21 @@ contract TipVault{
 
     
         ////////// CONSTRUCTOR ////////////
-        constructor(uint _id,string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress ){
+        constructor(uint _id,string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress, uint _endTime ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
                  tokens[_tokensTickers[i]] = VaultStruct.Token(_tokensTickers[i], _tokensAddress[i]);
                  tokenList.push(_tokensTickers[i]);               
             }
             admin= _from; 
-            isOpen=true;    
+            endTime=_endTime;    
             name = _name; 
             id=_id;             
         }
         
         function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable   {
              
-            require(isOpen==true,'l inscription a ce splitVault est cloture');
+            require(endTime > block.timestamp,'l inscription a ce splitVault est cloture');
 
              ///  try catch à faire 
             IERC20(tokens[_tokenTicker].tokenAddress).transferFrom(
@@ -62,9 +61,9 @@ contract TipVault{
             else
             {
                 VaultStruct.Tip storage ownerTip = Tips[_sender];
-                ownerTip.amount.add(_amount); 
+                ownerTip.amount +=  _amount; 
             }
-            totalAmount.add(_amount);    
+            totalAmount+= _amount;    
            
         }        
 
@@ -88,9 +87,9 @@ contract TipVault{
 
 
         function close(address _sender) external payable onlyFromAdmin(_sender) {   
-            require(isOpen==true,'l inscription a ce splitVault est deja cloture');
+            require(endTime > block.timestamp,'l inscription a ce splitVault est deja cloture');
                     
-            isOpen =false;  
+            endTime = 1;  
                     
         }
 
@@ -130,7 +129,7 @@ contract TipVault{
         
 
         function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){
-            return VaultStruct.tipVaultStruct(id,address(this),  name, admin, totalAmount, isOpen );
+            return VaultStruct.tipVaultStruct(id,address(this),  name, admin, totalAmount, endTime );
 
         }
         
@@ -138,13 +137,13 @@ contract TipVault{
             uint ret=0;
              for (uint i;i<tipsOwnersList.length;i++)
                 {
-                    ret.add(Tips[tipsOwnersList[i]].amount);
+                    ret = ret + Tips[tipsOwnersList[i]].amount;
                 }
             return ret;
         }
 
         function isSplitOpen() external view returns(bool){
-         return isOpen;   
+         return endTime > block.timestamp;   
         }
 
         modifier tokenExist(bytes32 ticker) {

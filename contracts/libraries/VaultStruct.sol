@@ -13,7 +13,7 @@ library VaultStruct{
             string name;
             address from;
             uint totalAmount;
-            bool isOpen;
+            uint endTime;
         }
 
       struct Bag{    
