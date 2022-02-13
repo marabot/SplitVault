@@ -133,7 +133,7 @@ contract TipVault{
 
         }
         
-        function getTotalAmountsplitVault() public view returns(uint){
+        function getTotalAmountsplitVault() external view returns(uint){
             uint ret=0;
              for (uint i;i<tipsOwnersList.length;i++)
                 {
