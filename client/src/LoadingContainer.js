@@ -20,19 +20,19 @@ function LoadingContainer(){
 
     useEffect(()=>{
             const init =async()=>{
-                alert('here?');
+                
                 const web3 = await getWeb3();
-                alert('here2?');
+               
                 const networkId = await web3.eth.net.getId();
-                alert('net '+networkId);
+                //alert('net '+networkId);
                 if (networkId=='5777')
                 {
-                    alert('here 2.1 ?');
+                  
                     const contracts = await getContracts(web3);
                     setContracts(contracts);                    
                 }
                 
-                alert('here 3 ?');
+              
                 const accounts = await web3.eth.getAccounts();
                 setWeb3(web3);       
                 setAccounts(accounts);             

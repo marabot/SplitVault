@@ -18,6 +18,7 @@ const styleAddr= {
 
 
 const styleTitreBack= {
+    color:"white",
     textAlign:"left",
     padding:"20px",
     paddingLeft:"50px",

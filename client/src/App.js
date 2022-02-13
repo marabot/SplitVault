@@ -32,6 +32,10 @@ function App({web3,  contracts, accounts}) {
     const [showWithdraw, setShowWithdraw] = useState([]);
 
 
+    // 0 = tipVault     1= tips
+    const [menu, setMenu]=useState(0);
+  
+
     const createSplit = async(name)=>{
       //alert(name);
       //alert(userAddr);
@@ -166,12 +170,26 @@ function App({web3,  contracts, accounts}) {
         }
     }
 
+    const text= {
+      color:"white", 
+      fontSize:30,
+      width:"100%"
+    }
+
+
     const myVaults= function(){
+
+      const text= {
+        color:"white",
+        textAlign:"center", 
+        fontSize:20,
+        width:"100%"
+      }
       if (MyVaults.length==0)
       {
         return(
           <tbody>
-         <div className="card">No tip yet by this adress</div>
+         <div className="card" style={text}>No tip yet by this address</div>
          </tbody>
         )
       }
@@ -220,22 +238,48 @@ function App({web3,  contracts, accounts}) {
       width:"100%"
    }
 
+   const boutonMenu= {
+    color:"white",
+    backgroundColor:"#002255",
+    fontSize:15,
+    width:"150px"
+ }
+
+ const paddingRow={
+   padding:'50px'
+ }
+
+
+function menuSelectTipVaults(){
+  setMenu(0);
+}
+   
+function menuSelectTips(){
+  setMenu(1);
+ 
+}
+
+
+
     return (    
       <div id="app" style={styleBack}>
        <Helmet>
-
-
        </Helmet>
         <Header 
         userAddr={userAddr}/>
-        <Row >-</Row>
+        <Row style={paddingRow}>
+          <Col className="col-sm-4"></Col>  
+          <Col className="col-sm-2"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>menuSelectTipVaults()}>TipVault</button></div></Col>  
+          <Col className="col-sm-2"><div ><button id="boutMenuTip" className="btn btn-primary"  style={boutonMenu} onClick={()=>menuSelectTips()}>Tips</button></div></Col> 
+          <Col className="col-sm-4"></Col>  
+        </Row>
         <Row>
           <Col className="col-sm-2"></Col>
-          <Col className="col-sm-5">          
-             {myTipVaultsRenderer()}
+          <Col className="col-sm-8">          
+             {menu==0?myTipVaultsRenderer():myVaults()}
           </Col>
-          <Col className="col-sm-5"> {myVaults()}</Col>
           <Col className="col-sm-2"></Col>
+     
         </Row>
         {createComponetRender()}
         {depositComponetRender()}
