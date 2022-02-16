@@ -30,9 +30,9 @@ contract VaultMain{
             VFactory=_vf;    
         }
 
-        function createTipVault(string memory _name) payable external returns(address){               
+        function createTipVault(string memory _name, address _receiver) payable external returns(address){               
         
-            TipVault newTipV= VFactory.createTipVault(_name, msg.sender);
+            TipVault newTipV= VFactory.createTipVault(_name, msg.sender,address(this),_receiver);
 
             address[] storage tp = tipVaultsByOwner[msg.sender];
             tp.push(address(newTipV));
@@ -53,7 +53,7 @@ contract VaultMain{
         }
 
         function retireTips(address _splitContract, address payable _to) external payable  {
-            tipVaultByAddr[_splitContract].retire(_to, msg.sender);   
+            tipVaultByAddr[_splitContract].retire(msg.sender);   
         }
 
         function closeTipVault(address _splitAddr) external payable     {

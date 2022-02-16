@@ -17,7 +17,7 @@ contract VaultFactory{
         }
 
 
-        function createTipVault(string memory _name, address _from) external   returns(TipVault){
+        function createTipVault(string memory _name, address _from, address _vaultMain,address _receiver) external returns(TipVault){
             bytes32[] memory tokensTickers = new bytes32[](tokenList.length);
             address[] memory tokensAddress = new address[](tokenList.length);
             for (uint i = 0; i < tokenList.length; i++) {
@@ -26,7 +26,7 @@ contract VaultFactory{
             }
             nextTipVaultId++;
             /// fermeture après 4 mois => TODO passer en paramètre
-            return (new TipVault(nextTipVaultId,_name,_from, tokensTickers,tokensAddress, block.timestamp + 4 weeks));
+            return (new TipVault(nextTipVaultId,_name,_from, _vaultMain,_receiver,tokensTickers,tokensAddress, block.timestamp + 4 weeks));
         }
 
 

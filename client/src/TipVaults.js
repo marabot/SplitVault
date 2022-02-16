@@ -20,18 +20,39 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
     const closeSplit= function(id){
       closeSplit(id);
     }*/
-
-
-    const htmlButtonCloseSplit= function(tip){
-      if(tip.endTime!=1){
-        return(
-          <div> <button className="btn btn-primary" onClick={()=>closeSplit(tip.addr)}>Close</button></div>
+    const boutDepositRender= function(tip){
+      if(tip.endTime > Date.now()/1000)
+      {
+        return (
+          <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button>
         )
+
       }else
       {
-        return(
-        <div> <button className="btn btn-primary" onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>
+        return (
+          <button className="btn btn-primary disabled" >Closed</button>
         )
+      }
+    }
+
+    const htmlButtonCloseSplit= function(tip){
+
+     if(tip.from == addrUser) {      
+        if(tip.endTime > Date.now()/1000){
+          return(
+            <div> <button className="btn btn-primary" onClick={()=>closeSplit(tip.addr)}>Close</button></div>
+          )
+        }else if(tip.endTime==1)
+        {
+          return(
+          <div> <button className="btn btn-primary" onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>
+          )
+        }else
+        {
+          return(
+            <div> <button className="btn btn-primary disabled"> Delivered </button></div>
+            )
+        }
       }
     }
     
@@ -46,10 +67,13 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
 
               <div style={label}>From</div>
               <div style={adressStye}>{tip.from}</div>
+
+              <div style={label}>Receiver</div>
+              <div style={adressStye}>{tip.receiver}</div>
             
               <div style={labelTotalAmount}>Total amount</div>
               <div  >{amountNotWei}</div>
-              <div style={boutDeposit}> <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button></div>
+              <div style={boutDeposit}>{boutDepositRender(tip)}</div>
               {htmlButtonCloseSplit(tip)}
             </div>
 
@@ -69,7 +93,7 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
     const label= {
         textAlign:"left",
         paddingTop:"7px",      
-        fontSize:"10px",      
+        fontSize:"18px",      
     }
 
     const labelTotalAmount= {

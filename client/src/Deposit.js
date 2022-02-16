@@ -24,6 +24,13 @@ function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
       closePopupDepo();
     }
 
+    const boutonMenu= {      
+      backgroundColor:"#002255",
+      fontSize:'10px',
+      padding:'100px'
+    } 
+
+
     useEffect(()=>{
         const init = async()=>{
         setAmount('');
@@ -33,7 +40,7 @@ function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
         },[]);
 
     return (
-        <div id="newSplit" className="card popup">
+       <div id="newSplit" className="card popup" style={boutonMenu} >
         <div className="closeCross" onClick={closePopup}>X</div>
         <h2 className="card-title">Deposit for {VaultAddr}</h2>   
 

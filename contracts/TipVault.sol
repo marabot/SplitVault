@@ -13,6 +13,7 @@ contract TipVault{
         string name;
         uint totalAmount;  
         uint id;
+      
         address[] tipsOwnersList;
         
         // Tokens
@@ -24,11 +25,14 @@ contract TipVault{
             address tokenAddress;
         }      
 
-        address admin;       
+        address admin; 
+        address vaultMainAddr;  
+        address receiver;
+    
 
     
         ////////// CONSTRUCTOR ////////////
-        constructor(uint _id,string memory _name, address _from,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress, uint _endTime ){
+        constructor(uint _id,string memory _name, address _from, address _vaultMain, address _receiver,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress, uint _endTime ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
                  tokens[_tokensTickers[i]] = VaultStruct.Token(_tokensTickers[i], _tokensAddress[i]);
@@ -37,10 +41,12 @@ contract TipVault{
             admin= _from; 
             endTime=_endTime;    
             name = _name; 
-            id=_id;             
+            id=_id;       
+            vaultMainAddr = _vaultMain;  
+            receiver=_receiver;    
         }
         
-        function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable   {
+        function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable onlyVaultMain {
           
             require(endTime > block.timestamp,'l inscription a ce splitVault est cloture');
 
@@ -77,19 +83,18 @@ contract TipVault{
 
         }
 
-        function retire(address payable _to, address _sender) external onlyFromAdmin(_sender)  {   
-                   
-                   
-                     _to.call{value:totalAmount}("");
-                      totalAmount=0;
+        function retire(address _sender) external onlyFromAdmin(_sender) onlyVaultMain {  
+                     receiver.call{value:totalAmount}("");
+                    
                    /* IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     toRetire
-                    ); */                   
+                    ); */    
+                     endTime = 0;                 
          }               
         
 
-        function close(address _sender) external payable onlyFromAdmin(_sender) {   
+        function close(address _sender) external payable onlyFromAdmin(_sender) onlyVaultMain {   
             require(endTime > block.timestamp,'l inscription a ce splitVault est deja cloture');
                     
             endTime = 1;                      
@@ -111,8 +116,8 @@ contract TipVault{
     
         function addToken (
             bytes32 ticker,
-            address tokenAddress)
-            onlyAdmin()
+            address tokenAddress)           
+            onlyVaultMain
             external {
             tokens[ticker] = VaultStruct.Token(ticker, tokenAddress);
             tokenList.push(ticker);
@@ -132,21 +137,14 @@ contract TipVault{
         
 
         function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){
-            return VaultStruct.tipVaultStruct(id,address(this),  name, admin, totalAmount, endTime );
+            return VaultStruct.tipVaultStruct(id,address(this),  name, admin, receiver, totalAmount, endTime );
 
         }
         
-        function getTotalAmountsplitVault() external view returns(uint){
-            uint ret=0;
-             for (uint i;i<tipsOwnersList.length;i++)
-                {
-                    ret = ret + Tips[tipsOwnersList[i]].amount;
-                }
-            return ret;
-        }
+       
 
         function isSplitOpen() external view returns(bool){
-         return endTime > block.timestamp;   
+         return endTime !=0  && endTime != 1  ;   
         }
 
         modifier tokenExist(bytes32 ticker) {
@@ -167,6 +165,12 @@ contract TipVault{
             require(_from == admin, 'only admin');
             _;
         }
+
+         modifier onlyVaultMain() {
+            require(msg.sender == vaultMainAddr, 'only VaultMain');
+            _;
+        }
+
         modifier onlyAdmin() {
             require(msg.sender == admin, 'only admin');
             _;

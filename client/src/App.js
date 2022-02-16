@@ -36,11 +36,10 @@ function App({web3,  contracts, accounts}) {
     const [menu, setMenu]=useState(0);
   
 
-    const createSplit = async(name)=>{
-      //alert(name);
-      //alert(userAddr);
-      await contracts.vaultMain.methods.createTipVault(name).send({from:userAddr});
-      const AllTipVaults = await contracts.vaultMain.methods.getTipVaults(userAddr).call();       
+    const createSplit = async(_name, _receiver)=>{
+         
+      await contracts.vaultMain.methods.createTipVault(_name, _receiver).send({from:userAddr});
+      const AllTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();       
       setMyTipVaults(AllTipVaults);
       setShowCreate(false);
 
@@ -225,7 +224,8 @@ function App({web3,  contracts, accounts}) {
     const init = async()=>{
       setShowDeposit(false);
       setShowCreate(false);
-      const acc= accounts[0];      
+      const acc= accounts[0]; 
+        
       setUserAddr(acc);
 
       const rawTokens = await contracts.vaultMain.methods.getTokens().call();
@@ -235,13 +235,15 @@ function App({web3,  contracts, accounts}) {
       }));           
       
       
-      const myTipVaults = await contracts.vaultMain.methods.getTipVaults(acc).call();  
+      const myTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();  
       setMyTipVaults(myTipVaults);    
       
       const myTips = await contracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
       setMyTips(myTips); 
       // alert(tokens);
-      
+    /*  const accounts = await web3.eth.getAccounts(); 
+      setAccounts(accounts);   
+      alert (accounts);     */ 
     }
     init();
     },[]);
@@ -270,10 +272,8 @@ function menuSelectTipVaults(){
 }
    
 function menuSelectTips(){
-  setMenu(1);
- 
+  setMenu(1); 
 }
-
 
 
     return (    
@@ -285,7 +285,7 @@ function menuSelectTips(){
        />
         <Row style={paddingRow}>
           <Col className="col-sm-4"></Col>  
-          <Col className="col-sm-2"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>menuSelectTipVaults()}>TipVault</button></div></Col>  
+          <Col className="col-sm-2"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>menuSelectTipVaults()}>TipVaults</button></div></Col>  
           <Col className="col-sm-2"><div ><button id="boutMenuTip" className="btn btn-primary"  style={boutonMenu} onClick={()=>menuSelectTips()}>Tips</button></div></Col> 
           <Col className="col-sm-4"></Col>  
         </Row>

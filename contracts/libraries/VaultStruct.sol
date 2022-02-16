@@ -11,7 +11,8 @@ library VaultStruct{
             uint id;
             address addr;
             string name;
-            address from;           
+            address from;
+            address receiver;           
             uint totalAmount;
             uint endTime;
         }
