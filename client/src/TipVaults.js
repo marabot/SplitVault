@@ -1,40 +1,44 @@
 import React from "react";
 
 
-function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWithdraw}) {
+function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDraw, addrUser}) {
     //alert('tip => ' + tip_Vaults[0].endTime + '---' + Date.now());
   
-    const deposit = function(id) {
-      showDeposit(id);
+    const deposit = function(addr) {
+     
+      showDeposit(addr);
     };
 
     const withdraw = function(id) {
-      showWithdraw(id);
+      withDraw(id);
     }
 
     const create = function() {
       showCreate();
     }
-
-    const close= function(id){
+/*
+    const closeSplit= function(id){
       closeSplit(id);
-    }
+    }*/
 
 
-    const htmlButtonCloseSplit= function(split){
-      if(split.open===true){
+    const htmlButtonCloseSplit= function(tip){
+      if(tip.endTime!=1){
         return(
-          <div> <button className="btn btn-primary" onClick={()=>close(split.splitId)}>Close</button></div>
+          <div> <button className="btn btn-primary" onClick={()=>closeSplit(tip.addr)}>Close</button></div>
         )
       }else
       {
         return(
-        <div> <button className="btn btn-primary" onClick={()=>withdraw(split.splitId)}>WithDraw</button></div>
+        <div> <button className="btn btn-primary" onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>
         )
       }
     }
     
     function displayTipVaulCard(tip){
+        const amountNotWei = tip.totalAmount/ Math.pow(10,18);
+        
+        
         return (
             <div style={tipVaultCard}>
               <div style={label} >Name</div>
@@ -44,8 +48,9 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,showWi
               <div style={adressStye}>{tip.from}</div>
             
               <div style={labelTotalAmount}>Total amount</div>
-              <div  >{tip.totalAmount}</div>
-              <div style={boutDeposit}> <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button></div>    
+              <div  >{amountNotWei}</div>
+              <div style={boutDeposit}> <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button></div>
+              {htmlButtonCloseSplit(tip)}
             </div>
 
         );

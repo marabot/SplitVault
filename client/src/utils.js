@@ -51,16 +51,19 @@ const getWeb3 = () => {
       TipVault.abi,
       deployedNetwork && deployedNetwork.address,
     );*/
-
-    const tokens = await vaultMain.methods.getTokens().call();
-    const tokenContracts = tokens.reduce((acc, token) => ({
+  
+    //const tokens = await vaultMain.methods.getTokens().call();
+   
+    /*const tokenContracts = tokens.reduce((acc, token) => ({
       ...acc,
       [web3.utils.hexToUtf8(token.ticker)]: new web3.eth.Contract(
         ERC20Abi,
         token.tokenAddress
       )
-    }), {});
-    return { vaultMain , ...tokenContracts };
+    }), {});*/
+    //return { vaultMain , ...tokenContracts };
+    return { vaultMain  };
   }
+  
 
   export { getWeb3, getContracts };

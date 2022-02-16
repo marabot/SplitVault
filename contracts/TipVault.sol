@@ -41,16 +41,17 @@ contract TipVault{
         }
         
         function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable   {
-             
+          
             require(endTime > block.timestamp,'l inscription a ce splitVault est cloture');
 
+            /*
              ///  try catch à faire 
             IERC20(tokens[_tokenTicker].tokenAddress).transferFrom(
                     _sender,
                     address(this),
                     _amount
                     );
-
+*/
             // si 1er dépôt
             if (Tips[_sender].from==address(0x0))
             {
@@ -63,8 +64,7 @@ contract TipVault{
                 VaultStruct.Tip storage ownerTip = Tips[_sender];
                 ownerTip.amount +=  _amount; 
             }
-            totalAmount+= _amount;    
-           
+            totalAmount+= _amount;               
         }        
 
 
@@ -72,25 +72,27 @@ contract TipVault{
                 return Tips[_tipOwner];
         }
 
-        
+        function getBalance()external view returns (uint){
+            return address(this).balance;
 
+        }
 
-        function retire(address _to, address _sender) external onlyFromAdmin(_sender)  {   
-                    uint toRetire = totalAmount;
-                    totalAmount=0;
-                    IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
+        function retire(address payable _to, address _sender) external onlyFromAdmin(_sender)  {   
+                   
+                   
+                     _to.call{value:totalAmount}("");
+                      totalAmount=0;
+                   /* IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     toRetire
-                    );                    
+                    ); */                   
          }               
         
-
 
         function close(address _sender) external payable onlyFromAdmin(_sender) {   
             require(endTime > block.timestamp,'l inscription a ce splitVault est deja cloture');
                     
-            endTime = 1;  
-                    
+            endTime = 1;                      
         }
 
         function getTokens() 
@@ -126,6 +128,7 @@ contract TipVault{
             return ret;
         }
 
+        fallback() external payable {}
         
 
         function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){

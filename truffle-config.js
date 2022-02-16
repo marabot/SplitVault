@@ -12,7 +12,7 @@ module.exports = {
     fuji:{
       provider: ()=> new HDWalletProvider(
         process.env.PRIVATE_KEY,
-        process.env.INFURA_URL
+        process.env.INFURA_URL_AVA
          
       ),
         gas: 7000000,
@@ -20,7 +20,31 @@ module.exports = {
         network_id:"*",
         skipDryRun: true
     },
+    rinkeby: {
+      provider: ()=> new HDWalletProvider(
+        process.env.PRIVATE_KEY,
+        process.env.INFURA_URL_RINKEBY
+      ),
+      network_id: 4,
+      gas: 4500000,
+      gasPrice: 10000000000,
+    }
+    ,
+    ropsten: {
+      provider: function() {
+        return new HDWalletProvider(process.env.PRIVATE_KEY, process.env.INFURA_URL_ROBSTEN)
+      },
+      network_id: 3,
+      gas: 4000000      //make sure this gas allocation isn't over 4M, which is the max
+    },
 
+    kovan: {
+      provider: function() {
+        return new HDWalletProvider(process.env.PRIVATE_KEY, process.env.INFURA_URL_KOVAN)
+      },
+      network_id: 42,
+      gas: 4000000      //make sure this gas allocation isn't over 4M, which is the max
+    },
 
     development: {
       host: "127.0.0.1",

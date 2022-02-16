@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 
 
-function Deposit({bagId, deposit, closePopupDepo, web3}) {
+function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
 
    const [amount , setAmount]=useState(0);
 
@@ -15,8 +15,9 @@ function Deposit({bagId, deposit, closePopupDepo, web3}) {
     }
 
     const depositCall = async()=>{   
-      //let weiAmount= web3.utils.toGWei(amount, 'ether');
-        await deposit(amount);
+     
+     
+        await deposit(VaultAddr,amount);
     };
 
     const closePopup = function(){
@@ -34,7 +35,7 @@ function Deposit({bagId, deposit, closePopupDepo, web3}) {
     return (
         <div id="newSplit" className="card popup">
         <div className="closeCross" onClick={closePopup}>X</div>
-        <h2 className="card-title">Deposit for {bagId}</h2>   
+        <h2 className="card-title">Deposit for {VaultAddr}</h2>   
 
           <div className="form-group row">
             <label className="col-sm-4 col-form-label" htmlFor="order-amount">Amount</label>

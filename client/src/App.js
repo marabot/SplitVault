@@ -26,7 +26,7 @@ function App({web3,  contracts, accounts}) {
     const [MyTips, setMyTips]= useState([]); 
 
     const [showDeposit, setShowDeposit] = useState([]);
-    const [DepositVaultId, setDepositVaultId] = useState([]);
+    const [DepositVaultAddr, setDepositVaultAddr] = useState([]);
 
     const [showCreate, setShowCreate] = useState([]);
     const [showWithdraw, setShowWithdraw] = useState([]);
@@ -46,10 +46,17 @@ function App({web3,  contracts, accounts}) {
 
     };
 
+   
+    
+
     /////////////////////////////    SHOW and HIDE POPUP
-    const showPopupDeposit= function(id){
-     /* setDepositVaultId(id);
-      setShowDeposit(true);*/
+    const showPopupDeposit= function(addr){
+     
+      setDepositVaultAddr(addr);
+     
+      setShowDeposit(true);
+     
+
     }
   
 
@@ -77,12 +84,13 @@ function App({web3,  contracts, accounts}) {
     }
 
    ///////////////////////// COMPONENTs RENDERER
-    const depositComponetRender = function(id)
+    const depositComponetRender = function()
     {         
       if (showDeposit==true){
+       
         return (
           <Deposit
-              VaultId={DepositVaultId}
+              VaultAddr={DepositVaultAddr}
               deposit={deposit}
               closePopupDepo={closePopupDepo}
               web3={web3}
@@ -108,37 +116,41 @@ function App({web3,  contracts, accounts}) {
       if (showWithdraw==true){
         return (
           <Withdraw
-              VaultId={DepositVaultId}
+              VaultAddr={DepositVaultAddr}
               withdraw={withdraw}
               closePopupWithdraw={closePopupWithdraw}
-          />      
-        
+          />             
         )
       }     
     }   
 
-    const withdraw= async(amount)=>{
+    const withdraw= async(tipVaultAddr)=>{
+    
+
       try{   
-        await contracts.splitVault.methods.retire(DepositVaultId, amount).send({from:userAddr});
-        closePopupDepo();
+        
+        await contracts.vaultMain.methods.retireTips(tipVaultAddr, userAddr).send({from:userAddr});
+        //closePopupDepo();
       }catch(e){
           alert('erreur deposit !  '  +  e);
       }   
 }
    
-    const deposit= async(amount)=>{
-          try{   
-            await contracts.splitVault.methods.deposit(DepositVaultId, amount).send({from:userAddr});
+    const deposit= async(tipVaultAddr,amount)=>{   
+      setDepositVaultAddr(tipVaultAddr);
+          try{  
+          
+            await contracts.vaultMain.methods.tip(web3.utils.toWei(amount),tipVaultAddr).send({from:userAddr, value:web3.utils.toWei(amount)});
             closePopupDepo();
           }catch(e){
               alert('erreur deposit !  '  +  e);
           }   
     }
 
-    const closeSplit = async(id)=>{
+    const closeSplit = async(tipVaultAddr)=>{
         try{   
-          await contracts.splitVault.methods.closeSubSplitVault(id).send({from:userAddr});
-          closePopupDepo();
+          await contracts.vaultMain.methods.closeTipVault(tipVaultAddr).send({from:userAddr});
+         // closePopupDepo();
         }catch(e){
             alert('erreur deposit !'  +  e);
         }   
@@ -164,11 +176,14 @@ function App({web3,  contracts, accounts}) {
             showDeposit={showPopupDeposit}
             showCreate={showCreateCard}   
             closeSplit={closeSplit} 
-            showWithdraw={showWithdrawCard}             
+            withDraw={withdraw} 
+            addrUser={userAddr}            
             />
           )
         }
     }
+
+ 
 
     const text= {
       color:"white", 
@@ -189,7 +204,7 @@ function App({web3,  contracts, accounts}) {
       {
         return(
           <tbody>
-         <div className="card" style={text}>No tip yet by this address</div>
+         <div className="card" style={text}>No tip yet from this address</div>
          </tbody>
         )
       }
@@ -225,7 +240,7 @@ function App({web3,  contracts, accounts}) {
       
       const myTips = await contracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
       setMyTips(myTips); 
-      
+      // alert(tokens);
       
     }
     init();
@@ -266,7 +281,8 @@ function menuSelectTips(){
        <Helmet>
        </Helmet>
         <Header 
-        userAddr={userAddr}/>
+        userAddr={userAddr}
+       />
         <Row style={paddingRow}>
           <Col className="col-sm-4"></Col>  
           <Col className="col-sm-2"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>menuSelectTipVaults()}>TipVault</button></div></Col>  

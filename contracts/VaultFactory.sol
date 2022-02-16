@@ -17,7 +17,7 @@ contract VaultFactory{
         }
 
 
-        function createTipVault(string memory _name, address _from) external  onlyAdmin returns(TipVault){
+        function createTipVault(string memory _name, address _from) external   returns(TipVault){
             bytes32[] memory tokensTickers = new bytes32[](tokenList.length);
             address[] memory tokensAddress = new address[](tokenList.length);
             for (uint i = 0; i < tokenList.length; i++) {

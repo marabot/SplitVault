@@ -44,22 +44,21 @@ contract VaultMain{
         }
 
 
-        function tip(uint _amount, address _splitContract) payable external 
+        function tip(uint _amount, address payable _splitContract) payable external 
         {             
-            tipVaultByAddr[_splitContract].deposit(_amount, msg.sender, 'DAI');
+            require(msg.value == _amount,"pas assez de e-moula");
+            _splitContract.call{value:_amount}("");
+            tipVaultByAddr[_splitContract].deposit(_amount, msg.sender, 'DAI' );
+            
         }
 
-        function retireTips(address _splitContract, address _to) external payable  {
-            tipVaultByAddr[_splitContract].retire(_to, msg.sender);           
-                 
+        function retireTips(address _splitContract, address payable _to) external payable  {
+            tipVaultByAddr[_splitContract].retire(_to, msg.sender);   
         }
-
-     
 
         function closeTipVault(address _splitAddr) external payable     {
               tipVaultByAddr[_splitAddr].close(msg.sender);  
         }               
-
 
 
         function getTipVaultsAddr(address _owner) external view returns (address[] memory){
@@ -93,7 +92,7 @@ contract VaultMain{
                 VaultStruct.Tip[] memory ret = new VaultStruct.Tip[](tipsByUser[_tipsOwner].length);
                     for(uint i= 0 ;i<tipsByUser[_tipsOwner].length;i++)
                     {
-                        ret[i] =  tipVaultByAddr[tipsByUser[_tipsOwner][i]].getTipStructOfUser(msg.sender);
+                        ret[i] =  tipVaultByAddr[tipsByUser[_tipsOwner][i]].getTipStructOfUser(_tipsOwner);
 
                     }  
                     return ret;
@@ -125,6 +124,10 @@ contract VaultMain{
             return _tokens;
         }
 
+        function getBalance() external view returns(uint){
+            return address(this).balance;
+
+        }
     
         function addToken(
             bytes32 ticker,

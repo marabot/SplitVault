@@ -24,13 +24,10 @@ function LoadingContainer(){
                 const web3 = await getWeb3();
                
                 const networkId = await web3.eth.net.getId();
-                //alert('net '+networkId);
-                if (networkId=='5777')
-                {
-                  
-                    const contracts = await getContracts(web3);
-                    setContracts(contracts);                    
-                }
+                //alert('net '+networkId);  
+                const contracts = await getContracts(web3);
+                setContracts(contracts);                    
+                
                 
               
                 const accounts = await web3.eth.getAccounts();
@@ -54,7 +51,7 @@ function LoadingContainer(){
    
     if (!isReady()){
       
-        return <div style={styleTitreBack}>Loading...  (check you are on the right network)</div>;
+        return <div style={styleTitreBack}>Loading...  (check you are on the Rinkeby network)</div>;
     }
 
    

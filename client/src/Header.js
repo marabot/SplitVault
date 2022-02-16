@@ -26,8 +26,10 @@ const styleTitreBack= {
     
 }
 
+
+
 function Header({
-    userAddr  
+    userAddr
 }){
     return(
         <diV>          
@@ -42,9 +44,10 @@ function Header({
                     <Col className="col-sm-4">
                         <div id="header"  style={styleMenuBack}>   
                                     <div className="header-title" style={styleAddr}>
-                                        {userAddr}
+                                        {userAddr} 
                                 </div>    
                         </div>
+                       
                     </Col>
             </Row>    
         </diV>

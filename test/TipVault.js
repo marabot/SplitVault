@@ -71,7 +71,7 @@ contract('VaultFactory' , accounts =>{
         
     }, 'échec de la création du SplitVault');
 
-    it('should deposit in a splitVault', async()=>{
+    it.only('should deposit in a splitVault', async()=>{
 
         await VM.createTipVault('nom test', {from:trader1}); 
 
@@ -86,18 +86,23 @@ contract('VaultFactory' , accounts =>{
             '1000', 
             {from: trader1}
         );     
-
-        await VM.tip('10',tipVault0.addr, {from:trader1}); 
-
+        const _1eth=web3.utils.toWei('1');
+        await VM.tip(_1eth,tipVault0.addr, {from:trader1,value:_1eth}); 
+        let cBAlance = await VM.getBalance();
+        console.log('balance =>'+cBAlance);
         let tpCopntract = await TipVault.at(tipVault0.addr); 
 
        //await spCopntract.deposit('100', {from:trader1}); 
 
-        let allBags =  await tpCopntract.getAllTips(); 
-        console.log(allBags);
-        assert(allBags.length == 1);    
-        assert(allBags[0].amount == '10');    
-        assert(allBags[0].from == trader1);      
+        let bal =  await tpCopntract.getBalance();
+        console.log('bal this : ' + bal); 
+
+        let allBags = await tpCopntract.getTipStructOfUser(trader1);
+        
+        console.log(allBags)  ;
+        assert(allBags.length == 3);    
+        assert(allBags.amount == _1eth);    
+        assert(allBags.from == trader1);      
        
 
     }, 'échec du dépot du Vault');
