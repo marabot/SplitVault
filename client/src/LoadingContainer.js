@@ -23,7 +23,7 @@ function LoadingContainer(){
                 
                 const web3 = await getWeb3();
                
-                const networkId = await web3.eth.net.getId();
+                //const networkId = await web3.eth.net.getId();
                 //alert('net '+networkId);  
                 const contracts = await getContracts(web3);
                 const accounts = await web3.eth.getAccounts();

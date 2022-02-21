@@ -8,7 +8,7 @@ function Withdraw({bagId, withdraw, closePopupWithdraw}) {
    const onHandleAmountChange = function(e) {
     let val = e.target.value;
 
-        if (!Number(val) && val!='') {
+        if (!Number(val) && val!=='') {
             return;
         }
         setAmount(e.target.value);

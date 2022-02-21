@@ -10,7 +10,7 @@ function Vaults({Vaults, title}) {
     }
 */
     const displayVaults = (Vaults)=> {
-          if (Vaults!='undefined'){
+          if (Vaults!=='undefined'){
             return (  
               Vaults.map((split) =>(
                    <tr key={split.id} >

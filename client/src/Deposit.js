@@ -8,7 +8,7 @@ function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
    const onHandleAmountChange = function(e) {
     let val = e.target.value;
 
-        if (!Number(val) && val!='') {
+        if (!Number(val) && val!=='') {
             return;
         }
         setAmount(val);
@@ -25,11 +25,11 @@ function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
     }
 
     const boutonMenu= {      
-      backgroundColor:"#002255",
-      fontSize:'10px',
-      padding:'100px'
+     
+      fontSize:'20px',
+      padding:'20px',
+      borderSize:'2px'
     } 
-
 
     useEffect(()=>{
         const init = async()=>{
@@ -59,7 +59,7 @@ function Deposit({VaultAddr, deposit, closePopupDepo, web3}) {
           
           <div className="text-right">
              <button className="btn btn-primary" onClick={depositCall} >Deposit</button>
-          </div>       
+          </div>     
         
       </div>
         

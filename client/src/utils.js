@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import VaultMain from './contracts/VaultMain.json';
-import ERC20Abi from './contracts/fixMapBug/ERC20Abi.json';
+
 
 const getWeb3 = () => {
     return new Promise((resolve, reject) => {

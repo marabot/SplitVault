@@ -83,14 +83,19 @@ contract TipVault{
 
         }
 
-        function retire(address _sender) external onlyFromAdmin(_sender) onlyVaultMain {  
-                     receiver.call{value:totalAmount}("");
+        function retire(address _sender) external onlyFromAdmin(_sender) onlyVaultMain returns (bool) {  
+                   (bool success, bytes memory data)=  receiver.call{value:totalAmount}("");
                     
                    /* IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     toRetire
-                    ); */    
-                     endTime = 0;                 
+                    ); */  
+                    if (success != false)
+                    {
+                        endTime = 0;  
+                    } 
+                    
+                    return success;
          }               
         
 

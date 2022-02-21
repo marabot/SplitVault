@@ -52,8 +52,8 @@ contract VaultMain{
             
         }
 
-        function retireTips(address _splitContract, address payable _to) external payable  {
-            tipVaultByAddr[_splitContract].retire(msg.sender);   
+        function retireTips(address _splitContract) external payable returns (bool) {
+            return tipVaultByAddr[_splitContract].retire(msg.sender);   
         }
 
         function closeTipVault(address _splitAddr) external payable     {

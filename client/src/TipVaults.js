@@ -37,12 +37,12 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
 
     const htmlButtonCloseSplit= function(tip){
 
-     if(tip.from == addrUser) {      
+     if(tip.from === addrUser) {      
         if(tip.endTime > Date.now()/1000){
           return(
             <div> <button className="btn btn-primary" onClick={()=>closeSplit(tip.addr)}>Close</button></div>
           )
-        }else if(tip.endTime==1)
+        }else if(tip.endTime===1)
         {
           return(
           <div> <button className="btn btn-primary" onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>

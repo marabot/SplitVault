@@ -38,7 +38,7 @@ td{
 }
 
 .card {
-    background-color: rgba(21, 22, 100, 0);
+    background-color: rgba(219, 231, 49, 0);
     border-radius: 20px;
     border: 0px solid black;
     padding: 0em;
@@ -112,7 +112,7 @@ td{
     margin: auto;
     padding-left:20px;
     padding-right:20px;
-    background: rgb(59, 56, 99);
+    background-color: rgb(21, 35, 119);
     z-index: 10;
     font-size:20px;
     }

@@ -15,11 +15,10 @@ import Col from 'react-bootstrap/Col';
 //function getSplitVault(address sbOwner) external view returns(SplitVault[] memory){       
 function App({web3,  contracts, accounts}) {
  
-    const [tokens, setTokens] = useState();
+   
     const [userAddr, setUserAddr] = useState('');
 
-   
-    const [MySplitVaults, setMySplitVaults] = useState([]);      
+
     const [MyVaults, setMyVaults]= useState([]); 
 
     const [MyTipVaults, setMyTipVaults] = useState([]);      
@@ -73,9 +72,7 @@ function App({web3,  contracts, accounts}) {
       setShowCreate(false);
     }
 
-    const showWithdrawCard= function(){      
-      setShowWithdraw(true);
-    }
+
   
 
     const closePopupWithdraw = function(){
@@ -85,7 +82,7 @@ function App({web3,  contracts, accounts}) {
    ///////////////////////// COMPONENTs RENDERER
     const depositComponetRender = function()
     {         
-      if (showDeposit==true){
+      if (showDeposit===true){
        
         return (
           <Deposit
@@ -100,7 +97,7 @@ function App({web3,  contracts, accounts}) {
 
     const createComponetRender = function()
     {         
-      if (showCreate==true){
+      if (showCreate===true){
         return (
           <NewVault           
           createSplit={createSplit} 
@@ -112,7 +109,7 @@ function App({web3,  contracts, accounts}) {
 
     const withdrawComponetRender = function()
     {         
-      if (showWithdraw==true){
+      if (showWithdraw===true){
         return (
           <Withdraw
               VaultAddr={DepositVaultAddr}
@@ -128,7 +125,7 @@ function App({web3,  contracts, accounts}) {
 
       try{   
         
-        await contracts.vaultMain.methods.retireTips(tipVaultAddr, userAddr).send({from:userAddr});
+        await contracts.vaultMain.methods.retireTips(tipVaultAddr).send({from:userAddr});
         //closePopupDepo();
       }catch(e){
           alert('erreur deposit !  '  +  e);
@@ -158,7 +155,7 @@ function App({web3,  contracts, accounts}) {
     const myTipVaultsRenderer= function(){
          
       /// bouton create desactive
-        if (MyTipVaults.length==0)
+        if (MyTipVaults.length===0)
         {
           return(
             <tbody>
@@ -199,7 +196,7 @@ function App({web3,  contracts, accounts}) {
         fontSize:20,
         width:"100%"
       }
-      if (MyVaults.length==0)
+      if (MyVaults.length===0)
       {
         return(
           <tbody>
@@ -229,12 +226,12 @@ function App({web3,  contracts, accounts}) {
       setUserAddr(acc);
 
       const rawTokens = await contracts.vaultMain.methods.getTokens().call();
-      const tokens = rawTokens.map(token=>({
+     /* const tokens = rawTokens.map(token=>({
           ...token,
           ticker: web3.utils.hexToUtf8(token.ticker)
       }));           
       
-      
+      */
       const myTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();  
       setMyTipVaults(myTipVaults);    
       
