@@ -30,7 +30,7 @@ contract VaultMain{
             VFactory=_vf;    
         }
 
-        function createTipVault(string memory _name, address _receiver) payable external returns(address){               
+        function createTipVault(string memory _name, address payable _receiver) payable external returns(address){               
         
             TipVault newTipV= VFactory.createTipVault(_name, msg.sender,address(this),_receiver);
 

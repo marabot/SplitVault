@@ -24,13 +24,13 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
       if(tip.endTime > Date.now()/1000)
       {
         return (
-          <button className="btn btn-primary" onClick={()=>deposit(tip.addr)}>Deposit</button>
+          <button className="btn btn-primary" style={boutonMenu} onClick={()=>deposit(tip.addr)}>Deposit</button>
         )
 
       }else
       {
         return (
-          <button className="btn btn-primary disabled" >Closed</button>
+          <button className="btn btn-primary disabled" style={boutonMenu} >Closed</button>
         )
       }
     }
@@ -40,17 +40,17 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
      if(tip.from === addrUser) {      
         if(tip.endTime > Date.now()/1000){
           return(
-            <div> <button className="btn btn-primary" onClick={()=>closeSplit(tip.addr)}>Close</button></div>
+            <div> <button className="btn btn-primary" style={boutonMenu} onClick={()=>closeSplit(tip.addr)}>Close</button></div>
           )
-        }else if(tip.endTime===1)
+        }else if(tip.endTime==1)
         {
           return(
-          <div> <button className="btn btn-primary" onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>
+          <div> <button className="btn btn-primary" style={boutonMenu} onClick={()=>withdraw(tip.addr)}>WithDraw</button></div>
           )
         }else
         {
           return(
-            <div> <button className="btn btn-primary disabled"> Delivered </button></div>
+            <div> <button style={boutonMenu} className="btn btn-primary disabled"> Delivered </button></div>
             )
         }
       }
@@ -112,12 +112,24 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
       fontSize:"18px"     
   }
 
+  const space={
+    marginBottom:"30px"
+  }
+
+  const boutonMenu= {
+    color:"white",
+    backgroundColor:"#00225520",
+    borderColor:"#ffffff",
+    fontSize:15,
+    width:"150px"
+ }
+
     return (
       <div id="order-list" className="card">      
     
-          <h2 className="card-title">{title}</h2>
-          <div><button className="btn btn-primary" onClick={()=>create()}>Create SplitVault</button></div>         
-          <hr/>
+         
+          <div style={space}><button className="btn btn-primary" style={boutonMenu} onClick={()=>create()}>Create SplitVault</button></div>         
+          
           <div className="row">
             <div className="col-sm-6">              
             </div>

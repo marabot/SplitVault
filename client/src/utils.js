@@ -41,6 +41,7 @@ const getWeb3 = () => {
 
   const getContracts = async web3 => {
     const networkId = await web3.eth.net.getId();
+    
     const deployedNetwork = VaultMain.networks[networkId];
     const vaultMain = new web3.eth.Contract(
       VaultMain.abi,
@@ -65,5 +66,10 @@ const getWeb3 = () => {
     return { vaultMain  };
   }
   
+  const getNetworkId = async web3 => {
+    const r= await web3.eth.net.getId();
+  
+    return r;
+  }
 
-  export { getWeb3, getContracts };
+  export { getWeb3, getContracts,getNetworkId };

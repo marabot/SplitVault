@@ -5,14 +5,14 @@ import Col from 'react-bootstrap/Col';
 const styleMenuBack= {
     color:"white",  
     fontSize:30,
-    background:"linear-gradient(135deg,#170F34,#170F34)",
+    background:"linear-gradient(135deg,#555555,#777777)",
     height:"100px"
     
 }
 
 const styleAddr= {
     textAlign:"center",
-    padding:"25px",
+    padding:"10px",
     fontSize:"20px"
 }
 
@@ -44,7 +44,7 @@ function Header({
                     <Col className="col-sm-4">
                         <div id="header"  style={styleMenuBack}>   
                                     <div className="header-title" style={styleAddr}>
-                                        {userAddr} 
+                                       Connected Metamask Account {userAddr} 
                                 </div>    
                         </div>
                        

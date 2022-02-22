@@ -159,7 +159,7 @@ function App({web3,  contracts, accounts}) {
         {
           return(
             <tbody>
-                     <div className="card"><button className="btn btn-primary disabled" onClick={showCreateCard} >Create SplitVault</button></div>
+                     <div className="card"><button className="btn btn-primary disabled" style={boutonMenu} onClick={showCreateCard} >Create SplitVault</button></div>
            </tbody>
           )
         }
@@ -254,7 +254,8 @@ function App({web3,  contracts, accounts}) {
 
    const boutonMenu= {
     color:"white",
-    backgroundColor:"#002255",
+    backgroundColor:"#00225520",
+    borderColor:"#ffffff",
     fontSize:15,
     width:"150px"
  }

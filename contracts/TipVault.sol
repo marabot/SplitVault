@@ -27,12 +27,12 @@ contract TipVault{
 
         address admin; 
         address vaultMainAddr;  
-        address receiver;
+        address payable receiver;
     
 
     
         ////////// CONSTRUCTOR ////////////
-        constructor(uint _id,string memory _name, address _from, address _vaultMain, address _receiver,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress, uint _endTime ){
+        constructor(uint _id,string memory _name, address _from, address _vaultMain, address payable _receiver,bytes32[] memory  _tokensTickers, address[] memory _tokensAddress, uint _endTime ){
             for(uint i=0;i<_tokensTickers.length;i++)
             {                
                  tokens[_tokensTickers[i]] = VaultStruct.Token(_tokensTickers[i], _tokensAddress[i]);
@@ -51,7 +51,7 @@ contract TipVault{
             require(endTime > block.timestamp,'l inscription a ce splitVault est cloture');
 
             /*
-             ///  try catch à faire 
+           
             IERC20(tokens[_tokenTicker].tokenAddress).transferFrom(
                     _sender,
                     address(this),
@@ -85,7 +85,7 @@ contract TipVault{
 
         function retire(address _sender) external onlyFromAdmin(_sender) onlyVaultMain returns (bool) {  
                    (bool success, bytes memory data)=  receiver.call{value:totalAmount}("");
-                    
+                   require(success, "Transfer failed.");
                    /* IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     toRetire
@@ -138,7 +138,9 @@ contract TipVault{
             return ret;
         }
 
-        fallback() external payable {}
+        fallback() external payable {
+            require(msg.data.length == 0);
+        }
         
 
         function getTipVaultStruct() external view returns(VaultStruct.tipVaultStruct memory){

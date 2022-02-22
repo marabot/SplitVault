@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getWeb3, getContracts } from './utils.js';
+import { getWeb3, getContracts, getNetworkId } from './utils.js';
 import App from './App.js';
 import Container from 'react-bootstrap/Container';
 
@@ -16,6 +16,7 @@ function LoadingContainer(){
     const [web3, setWeb3] = useState(undefined);
     const [accounts, setAccounts] = useState([]);
     const [contracts, setContracts] = useState(undefined);
+    const [networkID, setNetworkID] = useState();
 
 
     useEffect(()=>{
@@ -27,8 +28,9 @@ function LoadingContainer(){
                 //alert('net '+networkId);  
                 const contracts = await getContracts(web3);
                 const accounts = await web3.eth.getAccounts();
-
-
+                const networkId = await getNetworkId(web3);
+              
+                setNetworkID(networkId);
                 setContracts(contracts);        
                 setWeb3(web3);       
                 setAccounts(accounts);             
@@ -42,6 +44,7 @@ function LoadingContainer(){
     const isReady = ()=>{
         return (                
              typeof web3 !== 'undefined'
+             && (networkID == '5777'  || networkID =='4')
              && typeof contracts !=='undefined' 
              && accounts.length >0           
         );
