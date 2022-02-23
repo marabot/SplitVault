@@ -24,6 +24,11 @@ contract VaultMain{
         mapping(bytes32 => VaultStruct.Token) public tokens;
         bytes32[] public tokenList;
 
+        event TipVaultCreated(address indexed _from, address _addr);
+        event TipVaultDeposit(address indexed _from, address _addr, uint _value);
+        event TipVaultClosed(address indexed _from, address _addr);
+        event TipVaultWithdraw(address indexed _from);
+
         
         constructor(VaultFactory _vf){
             admin= msg.sender;      
@@ -39,7 +44,7 @@ contract VaultMain{
 
             tipVaultByAddr[address(newTipV)] = newTipV;
             allTipVaults.push(newTipV);
-            
+            emit TipVaultCreated(msg.sender, address(newTipV));
             return address(newTipV);
         }
 
@@ -49,15 +54,21 @@ contract VaultMain{
             require(msg.value == _amount,"pas assez de e-moula");
             _splitContract.call{value:_amount}("");
             tipVaultByAddr[_splitContract].deposit(_amount, msg.sender, 'DAI' );
+            emit TipVaultDeposit(msg.sender, _splitContract, _amount);
             
         }
 
         function retireTips(address _splitContract) external payable returns (bool) {
-            return tipVaultByAddr[_splitContract].retire(msg.sender);   
-        }
+           
+            bool ret= tipVaultByAddr[_splitContract].retire(msg.sender); 
+            if (ret) emit TipVaultWithdraw(msg.sender);
+            return ret;
+        }  
+          
 
         function closeTipVault(address _splitAddr) external payable     {
-              tipVaultByAddr[_splitAddr].close(msg.sender);  
+            tipVaultByAddr[_splitAddr].close(msg.sender);  
+            emit TipVaultClosed(msg.sender, _splitAddr);
         }               
 
 
