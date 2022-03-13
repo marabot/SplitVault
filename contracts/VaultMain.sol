@@ -49,13 +49,11 @@ contract VaultMain{
         }
 
 
-        function tip(uint _amount, address payable _splitContract) payable external 
-        {             
-            require(msg.value == _amount,"pas assez de e-moula");
-            _splitContract.call{value:_amount}("");
-            tipVaultByAddr[_splitContract].deposit(_amount, msg.sender, 'DAI' );
-            emit TipVaultDeposit(msg.sender, _splitContract, _amount);
-            
+        function tip(address payable _splitContract) payable external 
+        {                         
+            _splitContract.call{value:msg.value}("");
+            tipVaultByAddr[_splitContract].deposit(msg.value, msg.sender);
+            emit TipVaultDeposit(msg.sender, _splitContract, msg.value);            
         }
 
         function retireTips(address _splitContract) external payable returns (bool) {

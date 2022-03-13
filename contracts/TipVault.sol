@@ -27,8 +27,7 @@ contract TipVault{
 
         address admin; 
         address vaultMainAddr;  
-        address payable receiver;
-    
+        address payable receiver;    
 
     
         ////////// CONSTRUCTOR ////////////
@@ -46,12 +45,11 @@ contract TipVault{
             receiver=_receiver;    
         }
         
-        function deposit(uint _amount, address _sender, bytes32 _tokenTicker) external payable onlyVaultMain {
+        function deposit(uint _amount, address _sender) external payable onlyVaultMain {
           
             require(endTime > block.timestamp,'l inscription a ce splitVault est cloture');
 
-            /*
-           
+            /*           
             IERC20(tokens[_tokenTicker].tokenAddress).transferFrom(
                     _sender,
                     address(this),
@@ -85,7 +83,7 @@ contract TipVault{
 
         function retire(address _sender) external onlyFromAdmin(_sender) onlyVaultMain returns (bool) {  
                    (bool success, bytes memory data)=  receiver.call{value:totalAmount}("");
-                   require(success, "Transfer failed.");
+                  
                    /* IERC20(tokens[tokenList[0]].tokenAddress).transfer(                   
                     _to,
                     toRetire
@@ -93,7 +91,10 @@ contract TipVault{
                     if (success != false)
                     {
                         endTime = 0;  
-                    } 
+                    } else
+                    {
+                        return false;
+                    }
                     
                     return success;
          }               
