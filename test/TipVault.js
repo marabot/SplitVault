@@ -16,7 +16,7 @@ contract('VaultFactory' , accounts =>{
         VM = await VaultMain.new(VF.address)
        
         const amount = web3.utils.toWei('1000');
-        
+        /*
         await dai.faucet(trader1, amount)
         await dai.approve(
             VM.address, 
@@ -52,7 +52,7 @@ contract('VaultFactory' , accounts =>{
             {from: trader5}
         );
        
-        VF.addToken(DAI, dai.address); 
+        VF.addToken(DAI, dai.address); */
     })
   
 
@@ -91,14 +91,14 @@ contract('VaultFactory' , accounts =>{
     }, 'échec de la création du SplitVault');
 
 
-    it('should deposit in a splitVault', async()=>{
+    it.only('should deposit in a splitVault', async()=>{
         
         await VM.createTipVault('nom test', trader4, {from:trader1}); 
         let allSB =  await VM.getAllTipVaults();    
 
         let tipVault0= allSB[0];  
        
-        const depositvalue=web3.utils.toWei('0.1');
+        const depositvalue=web3.utils.toWei('1');
         await VM.tip(tipVault0.addr, {from:trader1,value:depositvalue}); 
 
         let tpContract = await TipVault.at(tipVault0.addr); 

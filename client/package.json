@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@walletconnect/web3-provider": "^1.7.5",
     "bootstrap": "^4.4.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.1",
@@ -14,6 +15,7 @@
     "react-scripts": "4.0.3",
     "web-vitals": "^2.1.2",
     "web3": "^1.6.1",
+    "web3modal": "^1.9.5",
     "yarn": "^1.22.17"
   },
   "scripts": {

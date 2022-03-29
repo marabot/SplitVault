@@ -52,7 +52,7 @@ contract VaultMain{
         function tip(address payable _splitContract) payable external 
         {                         
             _splitContract.call{value:msg.value}("");
-            tipVaultByAddr[_splitContract].deposit(msg.value, msg.sender);
+            tipVaultByAddr[_splitContract].deposit(msg.value,msg.sender);
             emit TipVaultDeposit(msg.sender, _splitContract, msg.value);            
         }
 

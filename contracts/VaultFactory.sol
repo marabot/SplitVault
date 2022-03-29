@@ -5,8 +5,7 @@ import './TipVault.sol';
 import './libraries/VaultStruct.sol';
 
 contract VaultFactory{
-        
-          
+                  
         mapping(bytes32 => VaultStruct.Token) public tokens;
         bytes32[] public tokenList;
 

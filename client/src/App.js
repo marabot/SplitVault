@@ -10,14 +10,18 @@ import Withdraw from "./Withdraw.js";
 import {Helmet} from "react-helmet";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import {getContracts} from './utils.js';
 
 //function getSplitVault(address sbOwner) external view returns(SplitVault[] memory){       
-function App({web3,  contracts, accounts}) {
+function App() {
  
    
     const [userAddr, setUserAddr] = useState('');
+    const [contracts,setContracts] = useState();
+    const [useTest, setUseTest]= useState(0);
 
+    const [web3, setWeb3] = useState([]);
+    const [accounts, setAccounts] = useState([]);
 
     const [MyVaults, setMyVaults]= useState([]); 
 
@@ -30,13 +34,20 @@ function App({web3,  contracts, accounts}) {
     const [showCreate, setShowCreate] = useState([]);
     const [showWithdraw, setShowWithdraw] = useState([]);
 
+    const [listener, setListener] = useState(undefined);
+    const [updateTrick,setUpdateTrick] = useState(0);
 
     // 0 = tipVault     1= tips
     const [menu, setMenu]=useState(0);
   
 
+
+
+
+
+
     const createSplit = async(_name, _receiver)=>{
-         
+        // console.log(web3);
       await contracts.vaultMain.methods.createTipVault(_name, _receiver).send({from:userAddr});
       const AllTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();       
       setMyTipVaults(AllTipVaults);
@@ -120,35 +131,35 @@ function App({web3,  contracts, accounts}) {
       }     
     }   
 
-    const withdraw= async(tipVaultAddr)=>{
-    
+    const withdraw= async(tipVaultAddr)=>{  
 
-      try{   
-        
-        await contracts.vaultMain.methods.retireTips(tipVaultAddr).send({from:userAddr});
-        //closePopupDepo();
+      try{  
+        await contracts.vaultMain.methods.retireTips(tipVaultAddr).send({from:userAddr});       
+        closePopupDepo(); 
+         
       }catch(e){
-          alert('erreur deposit !  '  +  e);
+          alert('error withdraw !  '  +  e);
       }   
 }
    
     const deposit= async(tipVaultAddr,amount)=>{   
       setDepositVaultAddr(tipVaultAddr);
           try{  
-          
-            await contracts.vaultMain.methods.tip(web3.utils.toWei(amount),tipVaultAddr).send({from:userAddr, value:web3.utils.toWei(amount)});
+            let weiAmount = web3.utils.toWei(amount);
+            await contracts.vaultMain.methods.tip(tipVaultAddr).send({from:userAddr, value:weiAmount});
             closePopupDepo();
+                  
           }catch(e){
-              alert('erreur deposit !  '  +  e);
+              alert('error deposit !  '  +  e);
           }   
     }
 
     const closeSplit = async(tipVaultAddr)=>{
         try{   
-          await contracts.vaultMain.methods.closeTipVault(tipVaultAddr).send({from:userAddr});
-         // closePopupDepo();
+          await contracts.vaultMain.methods.closeTipVault(tipVaultAddr).send({from:userAddr});     
+         
         }catch(e){
-            alert('erreur deposit !'  +  e);
+            alert('error closing !'  +  e);
         }   
     }
     
@@ -215,28 +226,41 @@ function App({web3,  contracts, accounts}) {
       }
    }
 
-    
+   const listenToEvents = (thisComponent)=> {
+    //const tradeIds=new Set();
+   // setTrades([]);
+      const listenerTipVaultCreated = contracts.vaultMain.events.TipVaultCreated({       
+        fromBlock: 0
+      })
+      .on('data',()=>{
+       
+      });
+      //setListener(listenerTipVaultCreated);
+      setListener(listener);
+  }
 
+  function forceUpdateHandler(){
+    this.forceUpdate();
+  };
   useEffect(()=>{
+    console.log('useEffect :');
     const init = async()=>{
+      console.log('web3 :' + web3);
+      
+   
       setShowDeposit(false);
       setShowCreate(false);
-      const acc= accounts[0]; 
-        
-      setUserAddr(acc);
+     
 
-      const rawTokens = await contracts.vaultMain.methods.getTokens().call();
+      //const rawTokens = await contracts.vaultMain.methods.getTokens().call();
      /* const tokens = rawTokens.map(token=>({
           ...token,
           ticker: web3.utils.hexToUtf8(token.ticker)
       }));           
       
       */
-      const myTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();  
-      setMyTipVaults(myTipVaults);    
-      
-      const myTips = await contracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
-      setMyTips(myTips); 
+    
+     
       // alert(tokens);
     /*  const accounts = await web3.eth.getAccounts(); 
       setAccounts(accounts);   
@@ -245,6 +269,32 @@ function App({web3,  contracts, accounts}) {
     init();
     },[]);
 
+
+    useEffect(()=>{
+      console.log("www  " + web3);
+      const update = async()=>{
+        if (web3 !='')
+        {
+          let smartContracts =  await getContracts(web3);
+          setContracts(smartContracts);
+          
+          const acc=accounts[0];
+          setUserAddr(acc);
+          console.log("app 280  acc: "+ acc);
+          console.log(contracts);
+          const myTipVaults = await smartContracts.vaultMain.methods.getAllTipVaults().call();  
+          setMyTipVaults(myTipVaults);    
+          console.log("app 280 : "+ myTipVaults);
+          const myTips = await smartContracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
+         setMyTips(myTips); 
+         //listenToEvents();
+        }
+     }
+
+       update();
+
+    },[accounts]);
+  
 
     const styleBack= {
       color:"white", 
@@ -278,8 +328,11 @@ function menuSelectTips(){
       <div id="app" style={styleBack}>
        <Helmet>
        </Helmet>
+       <div> test :  {useTest}</div>
         <Header 
-        userAddr={userAddr}
+         setWeb3={setWeb3}
+         setAccounts={setAccounts}
+         setUseTest={setUseTest}
        />
         <Row style={paddingRow}>
           <Col className="col-sm-4"></Col>  

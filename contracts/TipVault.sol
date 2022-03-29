@@ -66,7 +66,7 @@ contract TipVault{
             else
             {
                 VaultStruct.Tip storage ownerTip = Tips[_sender];
-                ownerTip.amount +=  _amount; 
+                ownerTip.amount += _amount; 
             }
             totalAmount+= _amount;               
         }        

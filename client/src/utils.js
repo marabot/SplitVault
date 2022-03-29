@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import VaultMain from './contracts/VaultMain.json';
+import TipVault from './contracts/TipVault.json';
 
 
 const getWeb3 = () => {
@@ -40,22 +41,26 @@ const getWeb3 = () => {
 
 
   const getContracts = async web3 => {
+    const chainId = await web3.eth.getChainId();
+    console.log("ds getContracts -  ChainID :" + chainId);
     const networkId = await web3.eth.net.getId();
-    
+    console.log("ds getContracts -  Network Id :" + networkId[0]);
     const deployedNetwork = VaultMain.networks[networkId];
+    console.log("ds getContracts - deployed Network :" + deployedNetwork);
     const vaultMain = new web3.eth.Contract(
       VaultMain.abi,
       deployedNetwork && deployedNetwork.address,
     );
-
+    console.log("ds getContracts - contract : " + vaultMain.abi + ' -- ' + vaultMain.address);
+    console.log(vaultMain);
    /* const tipVault = new web3.eth.Contract(
       TipVault.abi,
       deployedNetwork && deployedNetwork.address,
-    );*/
-  
+    );
+ */
     //const tokens = await vaultMain.methods.getTokens().call();
-   
-    /*const tokenContracts = tokens.reduce((acc, token) => ({
+   /*
+    const tokenContracts = tokens.reduce((acc, token) => ({
       ...acc,
       [web3.utils.hexToUtf8(token.ticker)]: new web3.eth.Contract(
         ERC20Abi,
@@ -66,6 +71,11 @@ const getWeb3 = () => {
     return { vaultMain  };
   }
   
+
+  
+
+
+
   const getNetworkId = async web3 => {
     const r= await web3.eth.net.getId();
   
