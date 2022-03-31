@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from "react";
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -7,8 +7,10 @@ import Col from 'react-bootstrap/Col';
 
 
 function Header({
-      setWeb3, setAccounts, setContracts,setUseTest
+     web3_2, setWeb3, setAccounts
 }){
+
+    
     //const EvmChains = window.EvmChains;
 
     // Web3modal instance
@@ -32,13 +34,13 @@ function Header({
         // Built-in web browser provider (only one can exist as a time)
         // like MetaMask, Brave or Opera is added automatically by Web3modal
         const providerOptions = {
-          walletconnect: {
+         /* walletconnect: {
             package: WalletConnectProvider,
             options: {
               // Mikko's test key - don't copy as your mileage may vary
               infuraId: "3198ac3a6fb44350a28522ea60608de7",
             }
-          },
+          },*/
         };
       
         web3Modal = new Web3Modal({
@@ -50,13 +52,12 @@ function Header({
       async function fetchAccountData() {
     
         // Get a Web3 instance for the wallet
-       // const web3 = new Web3(provider);
-      
-       
+       // const web3 = new Web3(provider);       
        if (window.ethereum) {
         web3 = new Web3(window.ethereum);   
         setWeb3(web3);     
-        await window.ethereum.enable();         
+        await window.ethereum.enable(); 
+       
       }
       // Legacy dapp browsers...
       else if (window.web3) {
@@ -74,11 +75,12 @@ function Header({
         web3 = new Web3(provider);
         console.log("No web3 instance injected, using Local web3.");
         setWeb3(web3);
+       
       }
       
         const accounts = await web3.eth.getAccounts();
         setAccounts(accounts);
-        setUseTest(5);
+        
         console.log("Web3 instance is", web3);
       
         // Get connected chain id from Ethereum node
@@ -205,6 +207,9 @@ function Header({
         // Set the UI back to the initial state
         document.querySelector("#prepare").style.display = "block";
         document.querySelector("#connected").style.display = "none";
+
+        setWeb3([]);
+        setAccounts([]);
       }
       
     window.addEventListener('DOMContentLoaded', async () => {
@@ -269,6 +274,18 @@ function Header({
    <div id="accounts">  </div>
  
   */
+
+   useEffect(()=>{
+     /*
+      if (web3_2==undefined) console.log("gagaehahaeg");
+      if (web3_2!=undefined) onConnect();
+    */
+    
+    init();
+    },[]);
+
+
+
     return(    
         <diV>          
             <Row>

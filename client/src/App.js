@@ -14,12 +14,10 @@ import {getContracts} from './utils.js';
 
 //function getSplitVault(address sbOwner) external view returns(SplitVault[] memory){       
 function App() {
- 
-   
+    
     const [userAddr, setUserAddr] = useState('');
     const [contracts,setContracts] = useState();
-    const [useTest, setUseTest]= useState(0);
-
+  
     const [web3, setWeb3] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
@@ -34,17 +32,11 @@ function App() {
     const [showCreate, setShowCreate] = useState([]);
     const [showWithdraw, setShowWithdraw] = useState([]);
 
-    const [listener, setListener] = useState(undefined);
-    const [updateTrick,setUpdateTrick] = useState(0);
+    const [listener, setListener] = useState(undefined);   
 
     // 0 = tipVault     1= tips
     const [menu, setMenu]=useState(0);
   
-
-
-
-
-
 
     const createSplit = async(_name, _receiver)=>{
         // console.log(web3);
@@ -54,8 +46,6 @@ function App() {
       setShowCreate(false);
 
     };
-
-   
     
 
     /////////////////////////////    SHOW and HIDE POPUP
@@ -63,9 +53,7 @@ function App() {
      
       setDepositVaultAddr(addr);
      
-      setShowDeposit(true);
-     
-
+      setShowDeposit(true);    
     }
   
 
@@ -162,17 +150,22 @@ function App() {
             alert('error closing !'  +  e);
         }   
     }
+
+
     
+    /*
+    <tbody>
+    <div className="card"><button className="btn btn-primary disabled" style={boutonMenu} onClick={showCreateCard} >Create SplitVault</button></div>
+</tbody>
+*/
     const myTipVaultsRenderer= function(){
          
       /// bouton create desactive
-        if (MyTipVaults.length===0)
-        {
-          return(
-            <tbody>
-                     <div className="card"><button className="btn btn-primary disabled" style={boutonMenu} onClick={showCreateCard} >Create SplitVault</button></div>
-           </tbody>
-          )
+        if (web3=='' || web3==undefined)
+        {          
+              return(           
+              ''
+             )          
         }
         else
         {
@@ -199,7 +192,7 @@ function App() {
     }
 
 
-    const myVaults= function(){
+    const myVaultsRenderer= function(){
 
       const text= {
         color:"white",
@@ -286,7 +279,7 @@ function App() {
           setMyTipVaults(myTipVaults);    
           console.log("app 280 : "+ myTipVaults);
           const myTips = await smartContracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
-         setMyTips(myTips); 
+          setMyTips(myTips); 
          //listenToEvents();
         }
      }
@@ -328,11 +321,11 @@ function menuSelectTips(){
       <div id="app" style={styleBack}>
        <Helmet>
        </Helmet>
-       <div> test :  {useTest}</div>
+     
         <Header 
          setWeb3={setWeb3}
-         setAccounts={setAccounts}
-         setUseTest={setUseTest}
+         setAccounts={setAccounts}   
+         web3={web3}    
        />
         <Row style={paddingRow}>
           <Col className="col-sm-4"></Col>  
@@ -343,7 +336,7 @@ function menuSelectTips(){
         <Row>
           <Col className="col-sm-2"></Col>
           <Col className="col-sm-8">          
-             {menu==0?myTipVaultsRenderer():myVaults()}
+             {menu==0?myTipVaultsRenderer():myVaultsRenderer()}
           </Col>
           <Col className="col-sm-2"></Col>
      
