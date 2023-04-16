@@ -28,7 +28,7 @@ function Tips({tips, title}) {
 
     return (
         <div id="order-list" className="card">      
-    
+          
           <h2 className="card-title"> {title}</h2>
           <div className="row">
             <div className="col-sm-6">

@@ -28,7 +28,6 @@ function Header({
 
         console.log("Initializing example");
         console.log("WalletConnectProvider is", WalletConnectProvider);
-        
       
         // Tell Web3modal what providers we have available.
         // Built-in web browser provider (only one can exist as a time)
@@ -41,12 +40,15 @@ function Header({
               infuraId: "3198ac3a6fb44350a28522ea60608de7",
             }
           },*/
+          
         };
       
         web3Modal = new Web3Modal({
           cacheProvider: false, // optional
           providerOptions, // required
-        });      
+        });
+        
+        onConnect();
       }
       
       async function fetchAccountData() {
@@ -70,7 +72,7 @@ function Header({
       // Fallback to localhost; use dev console port by default...
       else {
         const provider = new Web3.providers.HttpProvider(
-          "http://localhost:9545"
+          "http://localhost:7545"
         );
         web3 = new Web3(provider);
         console.log("No web3 instance injected, using Local web3.");
@@ -96,10 +98,7 @@ function Header({
        else{
         document.querySelector("#network-name").textContent = "plz connect to Ethereum network";
        }
-       /* const chainData =  EvmChains.getChain(chainId);
-       
-        document.querySelector("#network-name").textContent = chainData.name;
-      */
+      
         // Get list of accounts of the connected wallet
       
         // MetaMask does not give you all accounts, only the selected account
@@ -108,33 +107,7 @@ function Header({
         
         selectedAccount=accounts[0].substring(0,5)+ "..." + accounts[0].substring(accounts[0].length-3)
         document.querySelector("#selected-account").textContent = selectedAccount;
-      /*
-        // Get a handl
-        const template = document.querySelector("#template-balance");
-        const accountContainer = document.querySelector("#accounts");
-      
-        // Purge UI elements any previously loaded accounts
-        accountContainer.innerHTML = '';
-      
-        // Go through all accounts and get their ETH balance
-        const rowResolvers = accounts.map(async (address) => {
-          const balance = await web3.eth.getBalance(address);
-          // ethBalance is a BigNumber instance
-          // https://github.com/indutny/bn.js/
-          const ethBalance = web3.utils.fromWei(balance, "ether");
-          const humanFriendlyBalance = parseFloat(ethBalance).toFixed(4);
-          // Fill in the templated row and put in the document
-          const clone = template.content.cloneNode(true);
-          clone.querySelector(".address").textContent = address;
-          clone.querySelector(".balance").textContent = humanFriendlyBalance;
-          accountContainer.appendChild(clone);
-        });
-      
-        // Because rendering account does its own RPC commucation
-        // with Ethereum node, we do not want to display any results
-        // until data for all accounts is loaded
-        await Promise.all(rowResolvers);
-      */
+     
         // Display fully loaded UI for wallet data
         document.querySelector("#prepare").style.display = "none";
         document.querySelector("#connected").style.display = "block";
@@ -259,35 +232,29 @@ function Header({
     borderRadius: "20px"
  }
 
- const transparent={
-    backgroundColor:"#00000000"
-
- }
+ 
 
  const wrongNetworkMess={
     fontSize:15,
     paddingRight:"15px",
 
  }
-  /*
-   // infos web3
-   <div id="accounts">  </div>
- 
-  */
+
+ const connectDiv = {
+      paddingRight : "40px"
+
+ }
+  
 
    useEffect(()=>{
-     /*
-      if (web3_2==undefined) console.log("gagaehahaeg");
-      if (web3_2!=undefined) onConnect();
-    */
-    
+        
     init();
     },[]);
 
 
 
     return(    
-        <diV>          
+        <div>          
             <Row>
               <Col className="col-sm-8"> 
               <div style={styleTitreBack}>
@@ -298,22 +265,22 @@ function Header({
               </Col>
               <Col className="col-sm-4" > 
               
-                  <div   style={transparent} className="text-right">   
-                   <div id="prepare" >
-                      <button id="btn-connect" style={boutonMenu}> connect</button>
-                  </div>
-                  <div id="connected" style={displayNone}>
-                      <div id="header" >    
-                        <button id="btn-disconnect"  style={boutonMenu}> disconnect</button>
-                                    <div  style={styleAddr} id='selected-account'>   </div>
-                                    <div id="network-name" style={wrongNetworkMess}></div>
-                        </div>
+                  <div style={connectDiv}   className="text-right">   
+                    <div id="prepare" >
+                        <button id="btn-connect" style={boutonMenu}> connect</button>
                     </div>
+                    <div id="connected" style={displayNone}>
+                        <div id="header" >    
+                          <button id="btn-disconnect"  style={boutonMenu}> disconnect</button>
+                                      <div  style={styleAddr} id='selected-account'>   </div>
+                                      <div id="network-name" style={wrongNetworkMess}></div>
+                          </div>
+                      </div>
                   </div> 
     
                </Col>
             </Row>    
-        </diV>
+        </div>
     );
 }
 

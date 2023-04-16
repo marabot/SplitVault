@@ -113,42 +113,54 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
   }
 
   const space={
-    marginBottom:"30px"
+    marginBottom:"30px",
+    textAlign:'center'
   }
 
   const boutonMenu= {
     color:"white",
-    backgroundColor:"#00225520",
+    backgroundColor:"#ddddaa20",
     borderColor:"#ffffff",
     fontSize:15,
     width:"150px"
  }
 
+ const boutonMenuCreate= {
+  color:"white",
+  backgroundColor:"#00aa0020",
+  borderColor:"#ffffff",
+  fontSize:15,
+  width:"150px"
+}
+
+
+ const header ={
+    display:"flex",
+    justifyContent:"space-around"
+ }
+
     return (
-      <div id="order-list" className="card">      
-    
-         
-          <div style={space}><button className="btn btn-primary" style={boutonMenu} onClick={()=>create()}>Create SplitVault</button></div>         
+      <div id="order-list" className="card">
+         <div style={header}>
+                  <div>{title}</div><div style={space}><button className="btn btn-primary" style={boutonMenuCreate} onClick={()=>create()}>Create Vault</button></div>         
+         </div>
+          
           
           <div className="row">
             <div className="col-sm-6">              
             </div>
-
-                <table className={"table table-striped mb-0 order-list"}>
-                <thead>       
-              
-                </thead>        
-                <tbody>
+                <div className={"table table-striped mb-0 order-list"}>
+                 
+               
                 { tip_Vaults.map((tip) =>
-                (
-                  <div>
-                    {displayTipVaulCard(tip)}
-                  </div>
+                (                  
+                    <div key={tip.id}>
+                      {displayTipVaulCard(tip)}
+                   </div>   
              
-                  ))}               
-
-                </tbody>  
-              </table>
+                ))}        
+               
+              </div>
           </div>
       </div>
         

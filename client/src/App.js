@@ -2,6 +2,7 @@
 import React, {useState, useEffect} from "react";
 import Header from './Header.js';
 import TipVault from './TipVaults.js';
+import Tips from './Tips.js';
 import Vaults from './Vaults.js';
 import './Main.css';
 import NewVault from "./NewTipVault.js";
@@ -21,7 +22,7 @@ function App() {
     const [web3, setWeb3] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
-    const [MyVaults, setMyVaults]= useState([]); 
+    const [AllVaults, setAllVaults]= useState([]); 
 
     const [MyTipVaults, setMyTipVaults] = useState([]);      
     const [MyTips, setMyTips]= useState([]); 
@@ -35,8 +36,7 @@ function App() {
     const [listener, setListener] = useState(undefined);   
 
     // 0 = tipVault     1= tips
-    const [menu, setMenu]=useState(0);
-  
+    const [menu, setMenu]=useState(0);  
 
     const createSplit = async(_name, _receiver)=>{
         // console.log(web3);
@@ -44,9 +44,7 @@ function App() {
       const AllTipVaults = await contracts.vaultMain.methods.getAllTipVaults().call();       
       setMyTipVaults(AllTipVaults);
       setShowCreate(false);
-
-    };
-    
+    };    
 
     /////////////////////////////    SHOW and HIDE POPUP
     const showPopupDeposit= function(addr){
@@ -54,13 +52,11 @@ function App() {
       setDepositVaultAddr(addr);
      
       setShowDeposit(true);    
-    }
-  
+    }  
 
     const closePopupDepo = function(){
       setShowDeposit(false);
     }
-
 
     const showCreateCard= function(){      
       setShowCreate(true);
@@ -70,9 +66,6 @@ function App() {
     const closePopupCreate = function(){
       setShowCreate(false);
     }
-
-
-  
 
     const closePopupWithdraw = function(){
       setShowWithdraw(false);
@@ -150,15 +143,8 @@ function App() {
             alert('error closing !'  +  e);
         }   
     }
-
-
-    
-    /*
-    <tbody>
-    <div className="card"><button className="btn btn-primary disabled" style={boutonMenu} onClick={showCreateCard} >Create SplitVault</button></div>
-</tbody>
-*/
-    const myTipVaultsRenderer= function(){
+   
+    const AllVaultRenderer= function(){
          
       /// bouton create desactive
         if (web3=='' || web3==undefined)
@@ -171,8 +157,8 @@ function App() {
         {
           return(
             <TipVault
-            tip_Vaults={MyTipVaults}
-            title= 'My TipVAults'
+            tip_Vaults={AllVaults}
+            title= 'All Vaults'
             showDeposit={showPopupDeposit}
             showCreate={showCreateCard}   
             closeSplit={closeSplit} 
@@ -186,37 +172,68 @@ function App() {
  
 
     const text= {
-      color:"white", 
-      fontSize:30,
+      color:"white",
+      textAlign:"center", 
+      fontSize:20,
       width:"100%"
     }
 
 
     const myVaultsRenderer= function(){
 
-      const text= {
-        color:"white",
-        textAlign:"center", 
-        fontSize:20,
-        width:"100%"
-      }
-      if (MyVaults.length===0)
-      {
-        return(
-          <tbody>
-         <div className="card" style={text}>No tip yet from this address</div>
-         </tbody>
-        )
-      }
-      else
-      {
-        return(
-          <Vaults
-            vaults={MyVaults}
-            title= 'My Vaults'
+       /// bouton create desactive
+       if (web3=='' || web3==undefined || MyTipVaults.length==0)
+       {          
+             return(                 
+                <div className="card" style={text}>No Vault yet from this address</div>                
+            )          
+       }
+       else
+       {
+         return(
+           <TipVault
+           tip_Vaults={AllVaults}
+           title= 'your Vaults'
+           showDeposit={showPopupDeposit}
+           showCreate={showCreateCard}   
+           closeSplit={closeSplit} 
+           withDraw={withdraw} 
+           addrUser={userAddr}      
            />
-        )
-      }
+         )
+       }
+   }
+
+   const myTipsRenderer= function(){
+
+    
+    if (MyTips.length===0)
+    {
+      return(        
+       <div className="card" style={text}>No Tip yet from this address</div>       
+      )
+    }
+    else
+    {
+      return(
+        <Tips
+          vaults={MyTips}
+          title= 'your Deposits'
+         />
+      )
+    }
+ }
+
+   
+  const DisplayMainContent = function(){
+      switch (menu){
+        case 0:
+          return AllVaultRenderer();
+        case 1:
+          return myVaultsRenderer();
+        case 2:
+          return myTipsRenderer();
+      }         
    }
 
    const listenToEvents = (thisComponent)=> {
@@ -242,22 +259,8 @@ function App() {
       
    
       setShowDeposit(false);
-      setShowCreate(false);
+      setShowCreate(false);   
      
-
-      //const rawTokens = await contracts.vaultMain.methods.getTokens().call();
-     /* const tokens = rawTokens.map(token=>({
-          ...token,
-          ticker: web3.utils.hexToUtf8(token.ticker)
-      }));           
-      
-      */
-    
-     
-      // alert(tokens);
-    /*  const accounts = await web3.eth.getAccounts(); 
-      setAccounts(accounts);   
-      alert (accounts);     */ 
     }
     init();
     },[]);
@@ -269,22 +272,33 @@ function App() {
         if (web3 !='')
         {
           let smartContracts =  await getContracts(web3);
+          console.log("app 280  smartcontract : "+ smartContracts);
           setContracts(smartContracts);
           
           const acc=accounts[0];
           setUserAddr(acc);
           console.log("app 280  acc: "+ acc);
           console.log(contracts);
-          const myTipVaults = await smartContracts.vaultMain.methods.getAllTipVaults().call();  
-          setMyTipVaults(myTipVaults);    
+
+          const allVaults = await smartContracts.vaultMain.methods.getAllTipVaults().call();  
+          setAllVaults(allVaults);
+          console.log("AllVaults !!!!!!!!!!!!!!!!!")
+          console.log(allVaults);
+
+          console.log("app 280 userAddr: "+ acc);
+          const myTipVaults = await smartContracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();  
+
+          setMyTipVaults(allVaults.filter(vault=> vault.from == acc));    
+
           console.log("app 280 : "+ myTipVaults);
           const myTips = await smartContracts.vaultMain.methods.getTipsByOwnerAddr(acc).call();   
-          setMyTips(myTips); 
-         //listenToEvents();
+          setMyTips(myTips);
+          
+          
         }
      }
 
-       update();
+      update();
 
     },[accounts]);
   
@@ -304,16 +318,12 @@ function App() {
  }
 
  const paddingRow={
-   padding:'50px'
+    textAlign:"center",
+    padding:'50px'
  }
 
-
-function menuSelectTipVaults(){
-  setMenu(0);
-}
-   
-function menuSelectTips(){
-  setMenu(1); 
+const setMenuIndex= (index)=>{
+  setMenu(index);
 }
 
 
@@ -328,15 +338,17 @@ function menuSelectTips(){
          web3={web3}    
        />
         <Row style={paddingRow}>
-          <Col className="col-sm-4"></Col>  
-          <Col className="col-sm-2"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>menuSelectTipVaults()}>TipVaults</button></div></Col>  
-          <Col className="col-sm-2"><div ><button id="boutMenuTip" className="btn btn-primary"  style={boutonMenu} onClick={()=>menuSelectTips()}>Tips</button></div></Col> 
-          <Col className="col-sm-4"></Col>  
+           
+          <Col className="col-sm-4"><div ><button id="boutMenuTipVault" className="btn btn-primary" style={boutonMenu} onClick={()=>setMenuIndex(0)}>All Vaults</button></div></Col>  
+          <Col className="col-sm-4"><div ><button id="boutMenuTip" className="btn btn-primary"  style={boutonMenu} onClick={()=>setMenuIndex(1)}>your Vaults</button></div></Col> 
+          <Col className="col-sm-4"><div ><button id="boutMenuTip" className="btn btn-primary"  style={boutonMenu} onClick={()=>setMenuIndex(2)}>your deposits</button></div></Col> 
+         
         </Row>
         <Row>
           <Col className="col-sm-2"></Col>
           <Col className="col-sm-8">          
-             {menu==0?myTipVaultsRenderer():myVaultsRenderer()}
+            
+            {DisplayMainContent()}
           </Col>
           <Col className="col-sm-2"></Col>
      

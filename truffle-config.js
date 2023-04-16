@@ -2,9 +2,6 @@ const path = require("path");
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
-
-
-
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
@@ -30,6 +27,26 @@ module.exports = {
       gasPrice: 10000000000,
     }
     ,
+    goerli: {
+      provider: ()=> new HDWalletProvider(
+        process.env.PRIVATE_KEY_GOERLI,
+        process.env.INFURA_URL_GOERLI
+      ),
+      network_id: 5,
+      gasPrice: 100000000,
+                
+    },
+      sepolia: {
+      provider: ()=> new HDWalletProvider(
+        process.env.PRIVATE_KEY,
+        process.env.INFURA_URL_SEPOLIA
+      ),
+      network_id: 11155111,
+      gas: 4500000,
+      gasPrice: 10000000000,
+                
+    }
+    ,
     ropsten: {
       provider: function() {
         return new HDWalletProvider(process.env.PRIVATE_KEY, process.env.INFURA_URL_ROBSTEN)
@@ -48,7 +65,7 @@ module.exports = {
 
     development: {
       host: "127.0.0.1",
-      port: 8545,
+      port: 7545,
       network_id: "*" // Match any network id
     }
   },

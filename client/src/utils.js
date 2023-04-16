@@ -44,15 +44,20 @@ const getWeb3 = () => {
     const chainId = await web3.eth.getChainId();
     console.log("ds getContracts -  ChainID :" + chainId);
     const networkId = await web3.eth.net.getId();
-    console.log("ds getContracts -  Network Id :" + networkId[0]);
+    
+    console.log("ds getContracts -  Network Id :" + networkId);
     const deployedNetwork = VaultMain.networks[networkId];
     console.log("ds getContracts - deployed Network :" + deployedNetwork);
+    console.log("ds getContracts - address :" + deployedNetwork.address);
+    
     const vaultMain = new web3.eth.Contract(
       VaultMain.abi,
       deployedNetwork && deployedNetwork.address,
     );
-    console.log("ds getContracts - contract : " + vaultMain.abi + ' -- ' + vaultMain.address);
-    console.log(vaultMain);
+    
+    console.log(vaultMain.options.address);
+    console.log("ds getContracts - contract : " + vaultMain.options.jsonInterface + ' -- ' + vaultMain.options.address);
+   
    /* const tipVault = new web3.eth.Contract(
       TipVault.abi,
       deployedNetwork && deployedNetwork.address,
