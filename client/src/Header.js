@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 
 
 function Header({
-     web3_2, setWeb3, setAccounts
+     setWeb3, setAccounts, setNetwork
 }){
 
     
@@ -82,21 +82,23 @@ function Header({
       
         const accounts = await web3.eth.getAccounts();
         setAccounts(accounts);
-        
+       
         console.log("Web3 instance is", web3);
       
         // Get connected chain id from Ethereum node
         const chainId = await web3.eth.getChainId();
+        setNetwork(chainId);
+
         console.log(chainId);
         // Load chain information over an HTTP API
-       if (chainId==1)
+       if (chainId==11155111)
        {
-        document.querySelector("#network-name").textContent = "Ethereum MainNet";
+        document.querySelector("#network-name").textContent = "Sepolia TestNet";
        }else if (chainId==1337){
         document.querySelector("#network-name").textContent = "Truffle Local";
        }       
        else{
-        document.querySelector("#network-name").textContent = "plz connect to Ethereum network";
+        document.querySelector("#network-name").textContent = "plz connect to Sepolia network";
        }
       
         // Get list of accounts of the connected wallet

@@ -1,7 +1,6 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 
-
-function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDraw, addrUser}) {
+function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDraw, addrUser, network}) {
     //alert('tip => ' + tip_Vaults[0].endTime + '---' + Date.now());
   
     const deposit = function(addr) {
@@ -55,7 +54,8 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
         }
       }
     }
-    
+
+ 
     function displayTipVaulCard(tip){
         const amountNotWei = tip.totalAmount/ Math.pow(10,18);
         
@@ -73,7 +73,7 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
             
               <div style={labelTotalAmount}>Total amount</div>
               <div  >{amountNotWei}</div>
-              <div style={boutDeposit}>{boutDepositRender(tip)}</div>
+              <div style={boutDeposit} id="btnDeposit">{boutDepositRender(tip)}</div>
               {htmlButtonCloseSplit(tip)}
             </div>
 
@@ -104,7 +104,7 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
 
     const boutDeposit= {
         textAlign:"center",
-        fontSize:"8px",      
+        fontSize:"8px"       
     }
 
     const adressStye= {
@@ -139,10 +139,25 @@ function TipVaults({tip_Vaults, title, showDeposit,showCreate, closeSplit,withDr
     justifyContent:"space-around"
  }
 
+ if (document.querySelector("#btn-connect"))document.querySelector("#btn-connect").setAttribute("disabled", "disabled");
+
+ if (document.querySelector("#btn-connect"))document.querySelector("#btn-connect").removeAttribute("disabled");
+
+  useEffect(()=>{
+      if (network!="11155111")
+      {
+        if (document.querySelector("#btnDeposit")) document.querySelector("#btnDeposit").setAttribute("disabled", "disabled");
+        if ( document.querySelector("#btnCreate")) document.querySelector("#btnCreate").setAttribute("disabled", "disabled");
+      }
+    }      
+   
+   ,[]);
+
+
     return (
       <div id="order-list" className="card">
          <div style={header}>
-                  <div>{title}</div><div style={space}><button className="btn btn-primary" style={boutonMenuCreate} onClick={()=>create()}>Create Vault</button></div>         
+                  <div>{title}</div><div style={space}><button className="btn btn-primary" style={boutonMenuCreate} onClick={()=>create()} id="btnCreate">Create Vault</button></div>         
          </div>
           
           

@@ -21,7 +21,7 @@ function App() {
   
     const [web3, setWeb3] = useState([]);
     const [accounts, setAccounts] = useState([]);
-
+    const [Network, setNetwork] = useState([]);
     const [AllVaults, setAllVaults]= useState([]); 
 
     const [MyTipVaults, setMyTipVaults] = useState([]);      
@@ -163,7 +163,8 @@ function App() {
             showCreate={showCreateCard}   
             closeSplit={closeSplit} 
             withDraw={withdraw} 
-            addrUser={userAddr}            
+            addrUser={userAddr}   
+            network={Network}         
             />
           )
         }
@@ -198,7 +199,8 @@ function App() {
            showCreate={showCreateCard}   
            closeSplit={closeSplit} 
            withDraw={withdraw} 
-           addrUser={userAddr}      
+           addrUser={userAddr}
+           network={Network}      
            />
          )
        }
@@ -269,7 +271,7 @@ function App() {
     useEffect(()=>{
       console.log("www  " + web3);
       const update = async()=>{
-        if (web3 !='')
+        if (web3 !='' && Network =="11155111")
         {
           let smartContracts =  await getContracts(web3);
           console.log("app 280  smartcontract : "+ smartContracts);
@@ -333,9 +335,10 @@ const setMenuIndex= (index)=>{
        </Helmet>
      
         <Header 
+         
          setWeb3={setWeb3}
-         setAccounts={setAccounts}   
-         web3={web3}    
+         setAccounts={setAccounts}           
+         setNetwork={setNetwork}   
        />
         <Row style={paddingRow}>
            

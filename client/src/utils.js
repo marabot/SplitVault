@@ -48,7 +48,7 @@ const getWeb3 = () => {
     console.log("ds getContracts -  Network Id :" + networkId);
     const deployedNetwork = VaultMain.networks[networkId];
     console.log("ds getContracts - deployed Network :" + deployedNetwork);
-    console.log("ds getContracts - address :" + deployedNetwork.address);
+    if(deployedNetwork)console.log("ds getContracts - address :" + deployedNetwork.address);
     
     const vaultMain = new web3.eth.Contract(
       VaultMain.abi,
